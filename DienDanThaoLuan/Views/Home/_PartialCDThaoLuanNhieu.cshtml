@@ -1,0 +1,16 @@
+﻿@model List<DienDanThaoLuan.Models.SoBaiChuDe>
+
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white" style="background-color: #43c2b0">
+        Chủ đề được thảo luận nhiều
+    </div>
+    <ul class="list-group list-group-flush">
+        @foreach (var cd in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <span>💬 <a href="@Url.Action("BaiVietTheoCD", "Home", new {id = cd.ChuDe.MaCD, tenloai = cd.ChuDe.LoaiCD.TenLoai})" class="tencd">@cd.ChuDe.TenCD</a></span>
+                <span class="posts"> Số bài: @cd.SoBai</span>
+            </li>
+        }
+    </ul>
+</div>

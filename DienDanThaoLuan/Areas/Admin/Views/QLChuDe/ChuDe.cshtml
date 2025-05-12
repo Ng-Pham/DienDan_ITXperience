@@ -1,0 +1,77 @@
+﻿
+@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<LoaiCD>
+@{
+    ViewBag.Title = "ChuDe";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 style="text-align: center;" class="p-2">Danh Sách Chủ Đề</h2>
+<div style="background-color:white; border-radius:5px;">
+<table class="table table-bordered" style="background-color: #ffffff; border: 2px solid #333333;">
+    <thead style="background-color: #0078d4; color: white;">
+        <tr>
+            <th style="width: 250px; text-align: center;">Tên Loại Chủ Đề</th>
+            <th>Tên Chủ Đề</th>
+            <th style="width: 200px; text-align:center;">Chỉnh Sửa</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var loai in Model)
+        {
+            var chuDes = loai.ChuDes.OrderBy(cd => cd.TenCD).ToList(); // Lấy danh sách chủ đề cho mỗi loại (có thể rỗng)
+            var count = chuDes.Count(); // Đếm số chủ đề trong loại
+
+
+            if (count == 0) // Nếu loại chủ đề không có chủ đề
+            {
+                <tr class="bg-light text-dark">
+                    <td style="text-align: center;"><strong>@loai.TenLoai</strong></td>
+                    <td colspan="2" class="text-center text-muted">Không có chủ đề</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-center">
+                        <div class="mt-2">
+                            @Html.ActionLink("Thêm Chủ Đề", "ThemCD", new { id = loai.MaLoai }, new { @class = "btn btn-primary btn-sm" })
+                        </div>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                var firstItem = true; // Đánh dấu để hiển thị tên loại chủ đề chỉ một lần
+
+                foreach (var chuDe in chuDes)
+                {
+                    <tr class="bg-light text-dark">
+                        @if (firstItem)
+                        {
+                            <td rowspan="@count" style="vertical-align: middle; text-align: center;">
+                                <strong>@loai.TenLoai</strong>
+                            </td>
+                            <!-- Tên loại gộp dòng -->
+                            firstItem = false;
+                        }
+
+                        <td>@chuDe.TenCD</td>
+                        <td style="text-align: center;">
+                            @Html.ActionLink("Sửa", "SuaCD", new { id = chuDe.MaCD }, new { @class = "btn btn-sm btn-warning" })
+                        </td>
+                    </tr>
+                }
+                // Thêm nút Thêm Chủ Đề cho loại có chủ đề
+                <tr>
+                    <td colspan="3" class="text-center">
+                        <div class="mt-2">
+                            @Html.ActionLink("Thêm Chủ Đề", "ThemCD", new { id = loai.MaLoai }, new { @class = "btn btn-primary btn-sm" })
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table></div>
+<div class="MenuTrang mb-5">
+    @Html.PagedListPager(Model, page => Url.Action("ChuDe", new { page = page}))
+</div>

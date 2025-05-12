@@ -1,0 +1,61 @@
+﻿
+@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<ThongBao>
+@{
+    ViewBag.Title = "ThongBao";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<div class="list-group m-3 pt-2 pb-2">
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">@ViewBag.Message</div>
+    }
+    else
+    {
+        foreach (var tb in Model)
+        {
+            <a href="@Url.Action("MarkAsRead", "Home", new { id = tb.MaTB })"
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center
+                  @(tb.TrangThai.GetValueOrDefault() ? "read" : "unread")">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <h5 class="mb-1">@System.Xml.Linq.XElement.Parse(tb.NoiDung).Value</h5>
+                        <small class="text-muted">Lúc @tb.NgayTB</small>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end w-100">
+                    <span class="badge rounded-pill @(tb.LoaiTB.TenLoai.Contains("tố cáo") ? "bg-danger" : "bg-custom")">
+                        @if (tb.LoaiTB.TenLoai.Contains("bình luận"))
+                        {
+                            <text>Bình luận</text>;
+                        }
+                        else if (tb.LoaiTB.TenLoai.Contains("bài viết"))
+                        {
+                            <text>Bài viết</text>;
+                        }
+                        else if (tb.LoaiTB.TenLoai.Contains("tố cáo") && Session["AdminId"] != null) // Chỉ hiển thị cho quản trị viên
+                        {
+                            <text>Tố cáo</text>;
+                        }
+                    </span>   
+                </div>
+                <div class="d-flex justify-content-end mt-2">
+                    @using (Html.BeginForm("XoaThongBao", "Home", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MaThongBao" value="@tb.MaTB" />
+                        <button type="submit" id="btnDelete" class="badge rounded-pill bg-warning text-dark ms-2 mb-2">
+                            Xóa
+                        </button>
+                    }
+                </div>
+        
+            </a>
+        }
+    }
+    <div class="MenuTrang">
+        @Html.PagedListPager(Model, page => Url.Action("ThongBao", new { page = page }))
+    </div>
+</div>

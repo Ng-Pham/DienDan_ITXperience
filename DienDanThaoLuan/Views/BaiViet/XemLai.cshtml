@@ -1,0 +1,82 @@
+﻿@model DienDanThaoLuan.Models.BaiViet_BinhLuan
+@{
+    ViewBag.Title = "XemLai";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<style>
+    pre {
+        background-color: #282a36; /* Màu nền của theme Dracula */
+        color: #f8f8f2; /* Màu chữ */
+        padding: 15px; /* Đệm xung quanh mã code */
+        border-radius: 5px; /* Bo tròn góc */
+        overflow-x: auto; /* Hiển thị thanh cuộn ngang nếu cần */
+        max-height: 400px; /* Chiều cao tối đa */
+        overflow-y: auto; /* Hiển thị thanh cuộn dọc nếu cần */
+        font-family: 'Courier New', Courier, monospace; /* Font chữ */
+    }
+
+    .hljs-keyword {
+        color: #ff79c6;
+    }
+    /* Màu cho từ khóa */
+    .hljs-string {
+        color: #50fa7b;
+    }
+    /* Màu cho chuỗi */
+    .hljs-variable {
+        color: #bd93f9;
+    }
+    /* Màu cho biến */
+    .hljs-function {
+        color: #66d9ef;
+    }
+    /* Màu cho hàm */
+    .hljs-comment {
+        color: #6272a4;
+        font-style: italic;
+    }
+
+    code {
+        display: block;
+        white-space: pre;
+    }
+
+    .code-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container mt-4 mb-4">
+    <div class="card p-4">
+        <h5 class="mb-3"><strong>Chủ đề:</strong> <i>@Model.BaiViet.ChuDe.TenCD</i></h5>
+        <h5 class="mb-3"><strong>Tiêu đề bài viết:</strong> <i>@Model.BaiViet.TieuDeBV</i></h5>
+
+        <h5 class="mb-2"><strong>Nội dung:</strong></h5>
+        <div class="border p-3 rounded mb-4">
+            <p>@Html.Raw(ViewBag.NoiDung)</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Code))
+        {
+            <div class="code-container">
+                <pre>
+                <code class="language" id="codeBlock">@Html.Raw(HttpUtility.HtmlEncode(ViewBag.Code))</code>
+                </pre>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        hljs.highlightAll(); // Khởi tạo Highlight.js
+    });
+
+    // Khi nhấn vào nút "Từ chối"
+    document.getElementById("btnTuChoi").addEventListener("click", function () {
+        // Hiển thị phần nhập lý do từ chối
+        document.getElementById("lyDoTuChoiSection").style.display = "block";
+    });
+</script>

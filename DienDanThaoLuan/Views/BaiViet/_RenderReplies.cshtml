@@ -1,0 +1,79 @@
+﻿@model IEnumerable<DienDanThaoLuan.Models.BaiVietView>
+@{
+    int parentId = Convert.ToInt32(ViewBag.ParentId);
+}
+
+@foreach (var reply in Model.Where(x => x.BinhLuan.IDCha == parentId))
+{
+    <div class="post-container @(reply.IsAdmin ? "admin" : "")" id="bl-@reply.BinhLuan.MaBL">
+        <div class="row">
+            <div class="col-2 d-flex flex-column align-items-center border-custom">
+                <div class="avatar">
+                    <img src="~/Images/@reply.BinhLuan.NguoiDung.AnhDaiDien" alt="Avatar" />
+                </div>
+                <div class="pt-2"><a class="post-header" style="text-decoration: none;" href="@Url.Action("ThongTin","Account", new { id = reply.BinhLuan.MaND })">@reply.BinhLuan.NguoiDung.TenDangNhap</a></div>
+            </div>
+            <div class="col-10">
+                @if (!string.IsNullOrEmpty(@reply.ReplyToContent))
+                {
+                    <div class="reply-to-content">
+                        <strong>Replying to: '@ViewBag.replyTV'</strong>
+                        <div class="original-comment limit-text limit-line-text resize-img">
+                            @Html.Raw(@reply.ReplyToContent)
+                        </div>
+                    </div>
+                }
+                <div class="post-date">@reply.BinhLuan.NgayGui</div>
+                <div class="reply-content limit-text mb-4 resize-img">
+                    @Html.Raw(@reply.BinhLuan.NoiDung)
+                    @if (!string.IsNullOrEmpty(@reply.CodeContent))
+                    {
+                        <div class="code-container">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <button class="run-button d-none" onclick="runCode(this)">Run</button>
+                            <pre><code class="language codeBlock">@Html.Raw(HttpUtility.HtmlEncode(@reply.CodeContent))</code></pre>
+                            <div class="copy-notification" id="copyNotification">Code copied to clipboard!</div>
+                        </div>
+                    }
+                </div>
+                <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyInput('@reply.BinhLuan.MaBL')">Reply</button>
+                @if (Session["UserId"] != null)
+                {
+                    <button class="report-button right-btn" onclick="showModal('@reply.BinhLuan.MaBL')">Tố cáo</button>
+                }
+                else if (Session["AdminId"] != null)
+                {
+                    <button class="report-button right-btn" onclick="showXacNhan('@reply.BinhLuan.MaBL')">Xóa</button>
+
+                }
+            <div class="reply-input" id="reply-input-@reply.BinhLuan.MaBL" style="display:none;">
+                @using (Html.BeginForm("ThemBL", "BaiViet", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    if (!string.IsNullOrEmpty(TempData["Loi"]?.ToString())) // Kiểm tra thông báo lỗi
+                    {
+                        <div class="response-message error">@TempData["Loi"]</div>
+                    }
+                    <input type="hidden" name="MaBV" value="@ViewData["MaBV"]" />
+                    <input type="hidden" name="IDCha" value="@reply.BinhLuan.MaBL" />
+                    <div class="reply-box mt-2">
+                        <textarea class="content reply-input" name="NoiDung" placeholder="Nhập câu trả lời"></textarea>
+                        <div class="form-group p-2">
+                            <button type="button" class="toggleCodeEditor btn btn-secondary">Hiển thị/Ẩn Mã Code</button>
+                        </div>
+                        <div class="codeEditorContainer" style="display: none;">
+                            <div class="form-group p-2">
+                                <textarea name="CodeContent" class="reply-input codeContent" placeholder="Nhập mã code"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mx-2">Gửi</button>
+                    </div>
+                }
+            </div>
+
+            </div>
+        </div>
+    </div>
+    @* Đệ quy: Gọi lại partial view để hiển thị các reply của reply *@
+    @Html.Partial("_RenderReplies", Model, new ViewDataDictionary { { "ParentId", reply.BinhLuan.MaBL }, { "MaBV", ViewData["MaBV"] }, { "replyTV", reply.BinhLuan.NguoiDung.TenDangNhap } })
+}

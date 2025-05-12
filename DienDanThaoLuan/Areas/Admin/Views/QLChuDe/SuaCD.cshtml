@@ -1,0 +1,93 @@
+﻿@model DienDanThaoLuan.Models.ChuDe
+@{
+    ViewBag.Title = "SuaCD";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@using (Html.BeginForm(("SuaCD", "QLChuDe", FormMethod.Post)))
+{
+    <input type="hidden" name="MaLoai" value="@Model.LoaiCD.MaLoai" />
+    <input type="hidden" name="MaCD" value="@Model.MaCD" />
+    @Html.AntiForgeryToken()
+
+    <div class="container" style="max-width: 600px; margin: 30px auto; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); background-color: #ffffff;">
+        <h2 class="text-center mb-4">Chỉnh Sửa Thông Tin Chủ Đề</h2>
+        <hr />
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            <label class="control-label" style="font-size: 18px">Tên chủ đề:</label>
+            <input class="form-control" id="TenCD" name="TenCD" type="text" value="@Model.TenCD">
+            @Html.ValidationMessageFor(model => model.TenCD, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group text-center mt-4 d-flex justify-content-between">
+            @Html.ActionLink("Quay lại danh sách", "ChuDe", null, new { @class = "btn btn-back btn-lg" })
+            <button type="submit" class="btn btn-primary btn-lg">Sửa</button>
+        </div>
+    </div>
+}
+
+<style>
+    /* Thêm hiệu ứng cho nút */
+    .btn-primary {
+        background-color: #0c88c2; /* Màu chính */
+        border-color: #0c88c2;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Màu khi di chuột lên nút */
+            color: white;
+            transform: translateY(-2px); /* Hiệu ứng di chuyển nhẹ */
+        }
+
+    .btn-back {
+        background-color: #0056b3; /* Màu xanh navy cho nút Quay lại */
+        border-color: #004085;
+        color: white;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .btn-back:hover {
+            background-color: #003052; /* Màu khi di chuột lên nút Quay lại */
+            color: white;
+            transform: translateY(-2px); /* Hiệu ứng di chuyển nhẹ */
+        }
+
+    /* Căn giữa cho tất cả các phần tử */
+    .text-center {
+        text-align: center;
+    }
+
+    /* Tạo khoảng cách cho các phần tử */
+    .form-group {
+        margin-bottom: 20px; /* Khoảng cách giữa các phần tử */
+    }
+
+    /* Thêm kiểu cho tiêu đề */
+    h2 {
+        color: #333; /* Màu tiêu đề */
+        font-weight: bold;
+    }
+
+    /* Tăng khoảng cách giữa tiêu đề và các trường nhập liệu */
+    hr {
+        border-top: 2px solid #0c88c2; /* Màu của đường kẻ */
+    }
+</style>
+

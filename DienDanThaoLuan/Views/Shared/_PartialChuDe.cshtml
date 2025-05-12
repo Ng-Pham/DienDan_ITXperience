@@ -1,0 +1,11 @@
+﻿@model IEnumerable<DienDanThaoLuan.Models.LoaiCD>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">CHỦ ĐỀ</a>
+    <ul class="dropdown-menu">
+        @foreach (var cd in Model)
+        {
+            <li><a class="dropdown-item" href="@Url.Action("ChuDe", "ChuDe", new {id = cd.MaLoai})">@cd.TenLoai</a></li>
+        }
+    </ul>
+</li>

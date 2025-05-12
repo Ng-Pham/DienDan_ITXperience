@@ -1,0 +1,188 @@
+﻿@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<ThongBao>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-center mb-4 mt-4">Quản Lý Thông Báo</h2>
+<div class="mb-3">
+    <!-- Chuyển target tới modal đúng -->
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#NotificationModal">Thêm Thông Báo</button>
+</div>
+
+<div style="background-color: white; border-radius:15px;">
+    <!-- Table of notifications -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:center;">STT</th>
+                <th>Nội Dung</th>
+                <th style="text-align:center;">Ngày Cập Nhập</th>
+                <th style="text-align:center;">Chức Năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 0;
+            }
+            @foreach (var tb in Model)
+            {
+                <tr>
+                    <td style="text-align:center;">@(++i)</td>
+                    <td>@Html.Raw(@tb.NoiDung)</td>
+                    <td style="text-align:center;">@(tb.NgayTB.HasValue ? tb.NgayTB.Value.ToString("dd-MM-yyyy") : string.Empty)</td>
+                    <td style="text-align:center;">
+                        <!-- Sử dụng data-* attribute để lưu thông tin của thông báo -->
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#NotificationModal" data-id="@tb.MaTB" data-noidung="@tb.NoiDung" onclick="editNotification(this)">
+                            Sửa
+                        </button>
+                        <button class="btn btn-danger btn-sm btnDel" data-id="@tb.MaTB">Xóa</button>
+                        <button class="btn btn-primary btn-sm btnChonHien" data-id="@tb.MaTB">Chọn</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="MenuTrang mb-3">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }))
+</div>
+
+<div class="modal fade" id="NotificationModal" tabindex="-1" aria-labelledby="NotificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="panel-heading" id="modalTitle" style="font-size:20px;"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <input type="hidden" id="MaTB" name="MaTB" />
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Nội Dung</label>
+                        <textarea class="form-control" id="content" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnSubmit">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Mở modal và thay đổi tiêu đề khi modal hiển thị
+    $('#NotificationModal').on('show.bs.modal', function (event) {
+        var modal = $(this);
+        modal.find('#modalTitle').text('Thêm Thông Báo');
+        $('#MaTB').val('');
+        $('#content').val('');
+
+    });
+
+
+    // Cập nhật modal với thông tin khi nhấn sửa
+    function editNotification(button) {
+        var modal = $('#NotificationModal');
+        modal.find('#modalTitle').text('Sửa Thông Báo');
+
+        // Lấy các dữ liệu từ button đã nhấn (ví dụ MaTB và NoiDung)
+        var maTB = $(button).data('id');
+        var noidungHTML = $(button).data('noidung');
+        var noidungText = $("<div>").html(noidungHTML).text();
+
+        // Điền vào các ô nhập liệu
+        $('#MaTB').val(maTB);
+        $('#content').val(noidungText);
+    }
+
+    function Notification() {
+        const content = document.getElementById('content').value;
+        alert(`Thêm thông báo: ${content}`);
+        // Thêm logic để lưu vào cơ sở dữ liệu ở đây
+        $('#NotificationModal').modal('hide');  // Đóng modal sau khi thêm thông báo
+    }
+    $('#btnSubmit').click(function () {
+
+        let maTB = $('#MaTB').val().trim();
+
+        let content = $('#content').val().trim();
+
+        if (!content) {
+            alert("Vui lòng nhập nội dung thông báo.");
+            return;
+        }
+
+        if (maTB == "" || maTB == "0") {
+            // Thêm mới
+            $.ajax({
+                url: '/Admin/ThongBaoTong/Them',
+                type: 'POST',
+                data: { NoiDung: content },
+                success: function (response) {
+                    alert("Thông báo đã được thêm thành công!");
+                    location.reload(); // Tải lại trang để cập nhật danh sách thông báo
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            });
+        } else {
+            // Cập nhật
+            $.ajax({
+                url: '/Admin/ThongBaoTong/Sua',
+                type: 'POST',
+                data: { MaTB: maTB, NoiDung: content },
+                success: function (response) {
+                    alert("Thông báo đã được cập nhật thành công!");
+                    location.reload(); // Tải lại trang để cập nhật danh sách thông báo
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            });
+        }
+
+        $('#NotificationModal').modal('hide'); // Đóng modal sau khi thêm hoặc cập nhật
+    });
+    $('.btnDel').click(function () {
+        var idTB = $(this).data('id');
+        if (confirm('Bạn thực sự muốn xóa thông báo này.')) {
+            $.ajax({
+                url: '/Admin/ThongBaoTong/Xoa',
+                type: 'post',
+                data: {
+                    maTB: idTB
+                },
+                success: function (response) {
+                    alert("Thông báo đã được xóa thành công!");
+                    location.reload(); // Tải lại trang để cập nhật danh sách thông báo
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            });
+        }
+    });
+    $('.btnChonHien').click(function () {
+        var idTB = $(this).data('id');
+        $.ajax({
+            url: '/Admin/ThongBaoTong/ChonHien',
+            type: 'post',
+            data: {
+                maTB: idTB
+            },
+            success: function (response) {
+                alert("Thông báo đã được thay thành công!");
+                location.reload(); // Tải lại trang để cập nhật danh sách thông báo
+            },
+            error: function () {
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            }
+        });
+    });
+</script>

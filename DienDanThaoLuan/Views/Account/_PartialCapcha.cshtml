@@ -1,0 +1,44 @@
+﻿<style>
+
+    .captcha-wrapper {
+        background-color: rgba(255, 255, 255, 0.1); /* Nền mờ trắng */
+        padding: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .g-recaptcha {
+        transform: scale(1.02); /* Tùy chọn: chỉnh kích thước */
+        transform-origin: center;
+    }
+
+    .signin-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .captcha-responsive {
+        transform: scale(1);
+        transform-origin: 0 0;
+    }
+
+    /* Cho phép khung reCAPTCHA co lại tùy theo kích thước */
+    @@media screen and (max-width: 480px) {
+        .captcha-responsive {
+            transform: scale(0.85);
+        }
+    }
+
+    @@media screen and (max-width: 360px) {
+        .captcha-responsive {
+            transform: scale(0.75);
+        }
+    }
+</style>
+<div class="form-group captcha-wrapper">
+    <div class="captcha-responsive">
+        <div class="g-recaptcha" data-sitekey="6LdIEiQrAAAAAAB32pNKuoGPpDBzNVXwYLWjjAID"></div>
+    </div>
+</div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>

@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Không có quyền";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div style="text-align:center; margin-top: 100px;">
+    <h1 style="color:red;">🚫 Bạn không có quyền truy cập vào trang này 🚫</h1>
+    <p>Vui lòng quay lại trang chủ hoặc đăng nhập bằng tài khoản có quyền thích hợp.</p>
+    <a href="@Url.Action("Index", "Home", new { area = "" })"
+       class="btn btn-primary" style="margin-top:20px;">
+        Về trang chủ
+    </a>
+
+</div>
+

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<DienDanThaoLuan.Models.NguoiDung>
+
+<div class="card">
+    <div class="card-header bg-custom text-white">
+        Quản trị viên
+    </div>
+    <ul class="list-group list-group-flush">
+        @foreach (var i in Model)
+        {
+            <li class="list-group-item"><img src="~/Images/@i.AnhDaiDien" alt="User Icon" style="width: 30px; height: 30px; border-radius: 15px" /> @i.TenDangNhap</li>
+        }
+
+    </ul>
+</div>

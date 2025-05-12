@@ -1,0 +1,24 @@
+﻿@model List<DienDanThaoLuan.Models.SoBaiChuDe>
+
+
+@{
+    var groupedByLoai = Model.GroupBy(cd => cd.ChuDe.LoaiCD.TenLoai); // Nhóm chủ đề theo loại
+}
+
+@foreach (var group in groupedByLoai)
+{
+    <div class="card mb-4">
+        <div class="card-header bg-custom text-white">
+            @group.Key <!-- Tên Loại Chủ Đề -->
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var cd in group)
+            {
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>💬 <a href="@Url.Action("BaiVietTheoCD", "DienDanThaoLuan", new {id = cd.ChuDe.MaCD, tenloai = cd.ChuDe.LoaiCD.TenLoai})" class="tencd">@cd.ChuDe.TenCD</a></span>
+                    <span class="posts"> Số bài: @cd.SoBai</span>
+                </li>
+            }
+        </ul>
+    </div>
+}

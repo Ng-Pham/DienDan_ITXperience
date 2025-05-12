@@ -1,0 +1,98 @@
+﻿<!-- Thêm thư viện TinyMCE -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.2/tinymce.min.js"></script>
+
+<!-- Thêm thư viện CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/theme/darcula.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/mode/javascript/javascript.min.js"></script>
+
+<script>
+    // Khởi tạo TinyMCE cho tất cả textarea có class 'content'
+    tinymce.init({
+        selector: '.content',
+        plugins: 'image',
+        toolbar: 'undo redo | image | code',
+        images_upload_url: '/BaiViet/Upload',
+        automatic_uploads: true,
+        paste_data_images: false, // NGĂN ảnh base64
+        images_upload_handler: function (blobInfo, success, failure) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/BaiViet/Upload');
+            xhr.onload = function () {
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    failure('HTTP Error: ' + xhr.status);
+                    return;
+                }
+                var json = JSON.parse(xhr.responseText);
+                if (!json || typeof json.location != 'string') {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+                success(json.location);
+            };
+            var formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            xhr.send(formData);
+        },
+        images_dataimg_filter: function (img) {
+            // Loại bỏ bất kỳ ảnh nào có src là base64
+            return !img.src.startsWith('data:');
+        },
+       // Lọc nội dung dán
+        paste_preprocess: function (plugin, args) {
+            args.content = args.content.replace(/<img[^>]+src=["']data:image\/[^"']+["'][^>]*>/gi, '');
+        },
+        // Ngăn chỉnh sửa mã nguồn HTML chứa base64
+        valid_elements: 'img[src|alt|title|width|height|class|id],p,br,b,i,u,strong,em,ul,ol,li,a[href|target],span,code,pre,div,section,article,header,footer,aside,small,mark,del,ins,sub,sup,h1,h2,h3,h4,h5,h6,table,thead,tbody,tfoot,tr,th,td',
+        extended_valid_elements: 'img[src|alt|title|width|height|class|id]',
+        // Sử dụng URL tuyệt đối
+        relative_urls: false,
+        remove_script_host: false
+    });    
+    // Khởi tạo CodeMirror cho tất cả các form
+
+    document.querySelectorAll('.toggleCodeEditor').forEach(button => {
+        button.addEventListener('click', function () {
+            const codeEditorContainer = this.closest('form').querySelector('.codeEditorContainer');
+            document.querySelectorAll('.codeEditorContainer').forEach(container => {
+                if (container !== codeEditorContainer) {
+                    container.style.display = "none"; // Ẩn các container khác
+                }
+            });
+            if (codeEditorContainer.style.display === "none") {
+                codeEditorContainer.style.display = "block";
+               // Khởi tạo CodeMirror chỉ khi nó hiển thị
+                const textArea = codeEditorContainer.querySelector('.codeContent');
+                if (!textArea.CodeMirrorInstance) {
+                    textArea.CodeMirrorInstance = CodeMirror.fromTextArea(textArea, {
+                        lineNumbers: true, // Thay đổi theo ngôn ngữ bạn muốn
+                        theme: "darcula",  // Chọn theme cho CodeMirror
+                        lineWrapping: true
+                    });
+                }
+            } else {
+                codeEditorContainer.style.display = "none";
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('form'); // Chọn tất cả các form
+
+        forms.forEach(form => {
+            // Xử lý submit cho form
+            form.addEventListener('submit', function (e) {
+                tinymce.triggerSave(); // Đồng bộ nội dung từ TinyMCE về
+                var noiDung = encodeURIComponent(tinymce.get(form.querySelector('.content').name).getContent()); // Sử dụng name thay vì id
+                var codeContent = encodeURIComponent(codeEditor.getValue());
+                form.querySelector('.content').value = noiDung;
+                form.querySelector('.codeContent').value = codeContent;
+                if (noiDung.trim() === '') {
+                    e.preventDefault(); // Ngăn form submit
+                    alert('Nội dung không được để trống.');
+                }
+            });
+
+        });
+    });
+</script>

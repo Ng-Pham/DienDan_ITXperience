@@ -1,0 +1,480 @@
+﻿@model DienDanThaoLuan.Models.NguoiDung
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<style type="text/css">
+    /*.profile-header {
+        background-color: #f8f9fa;
+        padding: 2rem 0px;
+        margin-bottom: 2rem;
+        margin-left: 12px;
+        margin-right: 37px;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 10px;
+    }
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 5px solid #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .card {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+    }
+    .profile-img-small {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        /*css for avatar change/
+        .avatar-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .avatar-upload-icon {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background-color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+        .avatar-upload-icon:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.1);
+        }
+
+        .avatar-upload-icon i {
+            color: #3b82f6;
+            font-size: 14px;
+        }
+    }*/
+
+    /*css for cover change*/
+
+    .cover-container {
+        position: relative;
+        height: 350px;
+        background-color: #f0f2f5;
+        margin-bottom: 60px;
+        margin-left: 12px;
+        margin-right: 37px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cover-upload-icon {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+
+        .cover-upload-icon:hover {
+            background-color: #f0f2f5;
+        }
+
+    .profile-section {
+        position: relative;
+        max-width: 1000px;
+        margin: -135px 20px 0px 30px;
+        padding: 0 20px;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .profile-img-container {
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .profile-img-large {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 6px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        object-fit: cover;
+    }
+
+    .profile-info {
+        margin: 30px 0px;
+    }
+
+        .profile-info h1 {
+            font-size: 35px;
+        }
+
+    .profile-name {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 0;
+        color: #1c1e21;
+    }
+
+    .profile-role {
+        font-size: 15px;
+        color: #65676B;
+        margin-top: 5px;
+    }
+
+    .avatar-upload-icon {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background-color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    #password-strength-container {
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.3s ease;
+        height: 8px; /* Giữ đúng chiều cao progress bar */
+        overflow: hidden;
+    }
+
+        #password-strength-container.show {
+            transform: scaleY(1);
+        }
+
+    #password-strength-bar {
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
+</style>
+
+<div class="cover-container">
+    <img src="@Url.Content("~/Images/" + (Model.AnhBia ?? "default-bg.jpg"))" alt="Cover" class="cover-image" style=" border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+    <label for="cover" class="cover-upload-icon">
+        <i class="fas fa-camera"></i>
+        <span>Chỉnh sửa ảnh bìa</span>
+        @using (Html.BeginForm("ChangeCover", "UserInfo", FormMethod.Post, new { enctype = "multipart/form-data", id = "coverForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <input type="file"
+                   id="cover"
+                   name="cover"
+                   accept="image/*"
+                   class="d-none"
+                   onchange="handleCoverChange(this);">
+        }
+    </label>
+</div>
+
+<div class="profile-section">
+    <div class="profile-header">
+        <div class="profile-img-container">
+            <img src="@Url.Content("~/Images/" + Model.AnhDaiDien)" alt="Avatar" class="profile-img-large">
+            <label for="avatar" class="avatar-upload-icon">
+                <i class="fas fa-camera"></i>
+                @using (Html.BeginForm("ChangeAvatar", "UserInfo", FormMethod.Post, new { enctype = "multipart/form-data", id = "avatarForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="file"
+                           id="avatar"
+                           name="avatar"
+                           accept="image/*"
+                           class="d-none"
+                           onchange="handleAvatarChange(this);">
+                }
+            </label>
+        </div>
+        <div class="profile-info">
+            <h1 class="profile-name">@Model.HoTen</h1>
+            <div class="profile-role">@(Model.LoaiND.TenLoai == "admin" ? "Quản trị viên" : "Thành viên")</div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 98%">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 98%">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6 mb-4" style="">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Thông tin cá nhân</h5>
+                    @using (Html.BeginForm("UpdateUser", "UserInfo", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.MaND)
+
+                        <div class="mb-3">
+                            <p>Họ và tên: </p>
+                            @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control", required = "required" })
+                            <div class="invalid-feedback">Vui lòng nhập họ tên.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <p>Email: </p>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", required = "required" })
+                            <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <p>Giới tính: </p>
+                            @{
+                                var gioiTinhList = new List<SelectListItem>
+                                                                                                {
+                                    new SelectListItem { Value = "", Text = "Chọn giới tính", Disabled = true, Selected = string.IsNullOrEmpty(Model.GioiTinh) },
+                                    new SelectListItem { Value = "Nam", Text = "Nam", Selected = Model.GioiTinh == "Nam" },
+                                    new SelectListItem { Value = "Nữ", Text = "Nữ", Selected = Model.GioiTinh == "Nữ" }
+                                };
+                            }
+                            @Html.DropDownListFor(m => m.GioiTinh, gioiTinhList, new { @class = "form-select", required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <p>Số điện thoại: </p>
+                            @Html.TextBoxFor(m => m.SDT, new { @class = "form-control", type = "tel", required = "required" })
+                            <div class="invalid-feedback">Vui lòng nhập số điện thoại.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <p>Ngày sinh: </p>
+                            @Html.TextBoxFor(m => m.NgaySinh, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+                            <div class="invalid-feedback">Vui lòng chọn ngày sinh.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Cập nhật thông tin</button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Đổi mật khẩu</h5>
+                    @using (Html.BeginForm("ChangePassword", "UserInfo", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label" style="margin-bottom: 1rem">Mật khẩu hiện tại</label>
+                            <input type="password" name="currentPassword" class="form-control" required>
+                            <div class="invalid-feedback">Vui lòng nhập mật khẩu hiện tại.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label" style="margin-bottom: 1rem">Mật khẩu mới</label>
+                            <input type="password" id="password-field" name="newPassword" class="form-control" required>
+                            <div class="invalid-feedback">Vui lòng nhập mật khẩu mới.</div>
+                            <div id="password-strength-container" class="progress mt-sm-1">
+                                <div id="password-strength-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label" style="margin-bottom: 1rem">Xác nhận mật khẩu mới</label>
+                            <input type="password" name="confirmPassword" class="form-control" required>
+                            <div class="invalid-feedback">Vui lòng xác nhận mật khẩu mới.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submit-button" disabled>Đổi mật khẩu</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--script thay đổi avatar-->
+<script>
+    function handleAvatarChange(input) {
+        if (input.files && input.files[0]) {
+            // Kiểm tra kích thước file
+            if (input.files[0].size > 5 * 1024 * 1024) {
+                alert('File quá lớn. Vui lòng chọn file có kích thước nhỏ hơn 5MB.');
+                input.value = '';
+                return;
+            }
+
+            // Preview ảnh
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.querySelector('.profile-img-large').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+
+            // Tự động submit form
+            document.getElementById('avatarForm').submit();
+        }
+    }
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!--script tắt alert sau 10s-->
+<script>
+    // Đợi 10 giây (10000 milliseconds) và sau đó xóa các thẻ thông báo khỏi DOM
+    setTimeout(function () {
+        var alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+            //alert.remove(); // Xóa thẻ div thông báo
+            alert.classList.remove('show'); // Xóa lớp 'show' để bắt đầu hiệu ứng fade-out
+
+
+            // Chờ thêm 500ms để hoàn thành hiệu ứng fade-out rồi xóa thẻ khỏi DOM
+            setTimeout(function () {
+                alert.remove();
+            }, 500); // Thời gian phù hợp với hiệu ứng fade-out
+        });
+    }, 10000); // Thời gian 10 giây
+</script>
+
+<!--script thay đổi ảnh bìa-->
+<script>
+    function handleCoverChange(input) {
+        if (input.files && input.files[0]) {
+            if (input.files[0].size > 5 * 1024 * 1024) {
+                alert('File quá lớn. Vui lòng chọn file có kích thước nhỏ hơn 5MB.');
+                input.value = '';
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.querySelector('.cover-image-large').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+
+            document.getElementById('coverForm').submit();
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordField = document.getElementById('password-field');
+        const strengthContainer = document.getElementById('password-strength-container');
+        const strengthBar = document.getElementById('password-strength-bar');
+        const submitButton = document.getElementById('submit-button');
+
+        passwordField.addEventListener('input', function () {
+            const password = passwordField.value;
+
+            // Nếu người dùng có nhập, hiện progress
+
+            if (password.length > 0) {
+                strengthContainer.classList.add('show');
+            } else {
+                strengthContainer.classList.remove('show');
+                strengthBar.style.width = '0%';
+                strengthBar.className = 'progress-bar bg-danger';
+                updateSubmitButtonState(false); // Vô hiệu hóa nút đăng ký nếu mật khẩu không đủ mạnh
+                return;
+            }
+
+            // Tính độ mạnh
+            const lengthOK = password.length >= 8;
+            const hasLower = /[a-z]/.test(password);
+            const hasUpper = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+
+            let score = 0;
+            if (lengthOK) score++;
+            if (hasLower) score++;
+            if (hasUpper) score++;
+            if (hasNumber) score++;
+            if (hasSpecial) score++;
+
+            let color = "bg-danger";
+            let width = "20%";
+
+            if (score === 2) {
+                color = "bg-warning";
+                width = "40%";
+            } else if (score === 3) {
+                color = "bg-info";
+                width = "60%";
+            } else if (score === 4) {
+                color = "#007bff";
+                width = "80%";
+            } else if (score === 5) {
+                color = "bg-success";
+                width = "100%";
+            }
+
+            strengthBar.className = `progress-bar ${color}`;
+            strengthBar.style.width = width;
+
+            // Kiểm tra nếu mật khẩu đủ mạnh (từ 80% trở lên)
+            if (score >= 3) {
+                updateSubmitButtonState(true); // Cho phép nút đăng ký khi mật khẩu đủ mạnh
+            } else {
+                updateSubmitButtonState(false); // Vô hiệu hóa nút đăng ký nếu mật khẩu yếu
+            }
+        });
+        // Cập nhật trạng thái nút đăng ký
+        function updateSubmitButtonState(enabled) {
+            if (enabled) {
+                submitButton.disabled = false;
+                submitButton.style.cursor = 'pointer'; // Thêm kiểu con trỏ để rõ ràng
+            } else {
+                submitButton.disabled = true;
+                submitButton.style.cursor = 'not-allowed'; // Thêm kiểu con trỏ khi vô hiệu hóa
+            }
+        }
+    });
+</script>

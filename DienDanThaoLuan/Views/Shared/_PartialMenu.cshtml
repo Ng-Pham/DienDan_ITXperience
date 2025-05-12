@@ -1,0 +1,94 @@
+﻿
+<div id=menu>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
+                    </li>
+                    @Html.Action("_PartialChuDe", "Home")
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("BaiVietMoi", "BaiViet")">BÀI VIẾT MỚI</a>
+                    </li>
+                    <li class="nav-item">
+                        @if (Session["AdminId"] != null)
+                        {
+                            <a class="nav-link position-relative" href="@Url.Action("GopY", "HomeAdmin", new { area = "Admin" })">
+                                GÓP Ý
+                                <span id="unreadCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle badge-sm">@ViewBag.SLGY</span>
+                            </a>
+                        }
+                        else if(Session["UserId"] != null)
+                        {
+                            <a class="nav-link" href="@Url.Action("GopY", "Home")">GÓP Ý</a>
+                        }
+                    </li>
+                    <li class="nav-item">
+                        @if (Session["AdminId"] != null || Session["UserId"] != null)
+                        {
+                            <a class="nav-link position-relative" href="@Url.Action("ThongBao", "Home")">THÔNG BÁO<span id="unreadCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle badge-sm">@ViewBag.UnreadCount</span></a>
+                        }
+                    </li>
+                    <li class="nav-item d-none">
+                        <a class="nav-link" href="@Url.Action("ExecutionResult", "Code")">RUN CODE</a>
+                    </li>
+                    <li class="nav-item">
+                        @if (Session["AdminId"] != null)
+                        {
+                            <a class="nav-link position-relative" href="@Url.Action("DuyetBai", "QLBaiViet", new { area = "Admin" })">DUYỆT BÀI<span id="unreadCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle badge-sm">@ViewBag.SLBV</span></a>
+                        }
+                    </li>
+                    <li class="nav-item dropdown">
+                        @if (Session["AdminId"] != null)
+                        {
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">QUẢN LÝ CHỦ ĐỀ</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("QLLoaiCD", "QLChuDe", new { area = "Admin" })">Loại chủ đề</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ChuDe", "QLChuDe", new { area = "Admin" })">Chủ đề</a></li>
+                            </ul>
+                        }
+                    </li>
+                    <li class="nav-item">
+                        @if (Session["AdminId"] != null)
+                        {
+                            <a class="nav-link" href="@Url.Action("QLThanhVien", "QLThanhVien", new { area = "Admin" })">QUẢN LÝ THÀNH VIÊN</a>
+                        }
+                    </li>
+                    <li class="nav-item">
+                        @if (Session["AdminId"] != null)
+                        {
+                            <a class="nav-link" href="@Url.Action("Index", "ThongBaoTong", new { area = "Admin" })">THÔNG BÁO TỔNG</a>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const path = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            const linkPath = new URL(link.href).pathname;
+
+            if (link.classList.contains('dropdown-toggle')) {
+                const dropdownItems = link.closest('li').querySelectorAll('.dropdown-item');
+
+                dropdownItems.forEach(item => {
+                    if (new URL(item.href).pathname === path) {
+                        link.classList.add('active');
+                        return;
+                    }
+                });
+                return; 
+            }
+            if (linkPath === path) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Trang Chủ";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+<div class="row my-5">
+    <!-- Left Column -->
+    <div class="col-md-8">
+        <!-- Most Discussed Topics -->
+        @Html.Action("_PartialCDThaoLuanNhieu", "Home")
+
+        <!-- Technology Topics -->
+        @Html.Action("_PartialMotSoCD", "Home")
+    </div>
+
+    <!-- Right Column (Admin Section) -->
+    <div class="col-md-4">
+        @Html.Action("PartialQTV", "Home")
+    </div>
+</div>
+@section PartialBanner{
+    @Html.Action("_PartialBanner", "Home")
+}

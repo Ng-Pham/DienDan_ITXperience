@@ -1,0 +1,127 @@
+﻿@model DienDanThaoLuan.Models.BaiViet
+@{
+    ViewBag.Title = "ChinhSuaBV";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+<style>
+    pre {
+        background-color: #282a36; /* Màu nền của theme Dacrula */
+        color: #f8f8f2; /* Màu chữ */
+        padding: 15px; /* Đệm xung quanh mã code */
+        border-radius: 5px; /* Bo tròn góc */
+        overflow-x: auto; /* Hiển thị thanh cuộn ngang nếu cần */
+        max-height: 400px; /* Chiều cao tối đa */
+        overflow-y: auto; /* Hiển thị thanh cuộn dọc nếu cần */
+        font-family: 'Courier New', Courier, monospace; /* Font chữ */
+    }
+
+    .hljs-keyword {
+        color: #ff79c6;
+    }
+    /* Màu cho từ khóa */
+    .hljs-string {
+        color: #50fa7b;
+    }
+    /* Màu cho chuỗi */
+    .hljs-variable {
+        color: #bd93f9;
+    }
+    /* Màu cho biến */
+    .hljs-function {
+        color: #66d9ef;
+    }
+    /* Màu cho hàm */
+    .hljs-comment {
+        color: #6272a4;
+        font-style: italic;
+    }
+    /* Định dạng cho mã bên trong */
+    code {
+        display: block; /* Chuyển thành khối */
+        white-space: pre; /* Giữ nguyên định dạng */
+    }
+
+    .code-container {
+        position: relative; /* Để nút copy có thể được định vị tương đối */
+        margin-bottom: 20px;
+    }
+</style>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="container mt-3 p-2 mb-4" style="background-color:white; border-radius:10px;">
+    <div class="d-flex justify-content-end">
+        @using (Html.BeginForm("XoaBai", "BaiViet", FormMethod.Post))
+        {
+            <input type="hidden" name="MaBV" value="@Model.MaBV" />
+            <button type="submit" id="btnDelete" class="btn btn-danger">Xóa Bài Viết</button>
+        }
+    </div>
+    @using (Html.BeginForm("CapNhapBV", "BaiViet", FormMethod.Post))
+    {
+        <h2 class="text-center">CHỈNH SỬA BÀI VIẾT</h2>
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            </div>
+        }
+        if (!string.IsNullOrEmpty(ViewBag.Loi)) // Kiểm tra thông báo lỗi
+        {
+            <div class="response-message error">@ViewBag.Loi</div>
+        }
+        <input type="hidden" name="MaBV" value="@Model.MaBV" />
+        <div class="form-group p-2">
+            <h5 class="mb-3"><strong>Chủ đề:</strong> <i>@Model.ChuDe.TenCD</i></h5>
+            <h5 class="mb-3"><strong>Tiêu đề bài viết:</strong> <i>@Model.TieuDeBV</i></h5>
+        </div>
+        <div class="form-group p-2">
+            <label for="content" style="font-size: 20px; font-weight: bold;">Nội dung bài viết:</label>
+            <textarea name="NoiDung" class="content form-control mt-2" rows="10">@Html.Raw(HttpUtility.HtmlEncode(ViewBag.NDVB))</textarea>
+        </div>
+        if (!string.IsNullOrEmpty(ViewBag.Code))
+        {
+            <div class="codeEditorContainer">
+                <div class="form-group p-2">
+                    <label for="codeContent" style="font-size: 20px; font-weight: bold;">Code:</label>
+                    <textarea name="CodeContent" id="Code" class="form-control mt-2 codeContent">@Html.Raw(HttpUtility.HtmlEncode(ViewBag.Code))</textarea>
+                </div>
+            </div>
+        }
+        else
+        {
+
+            <div class="form-group p-2">
+                <button type="button" class="toggleCodeEditor btn btn-secondary">Hiển thị/Ẩn Mã Code</button>
+            </div>
+
+            <div class="codeEditorContainer" style="display: none;">
+                <div class="form-group p-2">
+                    <label for="codeContent" style="font-size: 20px; font-weight: bold;">Code:</label>
+                    <textarea name="CodeContent" class="codeContent form-control mt-2" rows="10" placeholder="Nhập mã code"></textarea>
+                </div>
+            </div>
+        }
+        <div class="d-flex justify-content-end p-2">
+            <button type="submit" class="btn btn-primary">Gửi Lại Bài Viết</button>
+        </div>
+    }
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const textArea = document.getElementById('Code');
+        if (!textArea.CodeMirrorInstance) {
+            textArea.CodeMirrorInstance = CodeMirror.fromTextArea(textArea, {
+                lineNumbers: true, // Thay đổi theo ngôn ngữ bạn muốn
+                theme: "darcula",  // Chọn theme cho CodeMirror
+                lineWrapping: true
+            });
+        }
+    })
+</script>
+        @Html.Partial("_EditorScripts")

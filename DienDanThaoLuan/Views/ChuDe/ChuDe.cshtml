@@ -1,0 +1,54 @@
+﻿
+@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<SoBaiChuDe>
+@{
+    ViewBag.Title = "ChuDe";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@section breadcrumb{
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                @foreach (var ten in Model)
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("ChuDe", "ChuDe", new {id = ten.ChuDe.MaLoai})" style="text-decoration: none; color: black; font-size: 22px">@ten.ChuDe.LoaiCD.TenLoai</a></li>
+                    break;
+                }
+                @if (!Model.Any())
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("ChuDe", "ChuDe", new {id = @ViewBag.MaLoai})" style="text-decoration: none; color: black; font-size: 22px">@ViewBag.TenLoai</a></li>
+                }
+            </ol>
+        </nav>
+    </div>
+}
+<div class="row my-5">
+    <!-- Left Column -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning m-2">@ViewBag.Message</div>
+            }
+            <ul class="list-group list-group-flush">
+                @foreach (var cd in Model)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>💬 <a href="@Url.Action("BaiVietTheoCD", "ChuDe", new {id = cd.ChuDe.MaCD, tenloai = cd.ChuDe.LoaiCD.TenLoai})" class="tencd">@cd.ChuDe.TenCD</a></span>
+                        <span class="posts"> Số bài: @cd.SoBai</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="MenuTrang">
+            @Html.PagedListPager(Model, page => Url.Action("ChuDe", new { page = page, id = ViewBag.MaLoai }))
+        </div>
+    </div>
+
+    <!-- Right Column (Admin Section) -->
+    <div class="col-md-4">
+        @Html.Action("PartialQTV", "Home")
+    </div>
+</div>

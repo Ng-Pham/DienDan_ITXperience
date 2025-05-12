@@ -1,0 +1,534 @@
+﻿/* General body settings */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e7e7e7;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Header Section - Full width */
+#header {
+    background-color: #0c88c2;
+}
+
+#menu {
+    background-color: #f8f9fa;
+}
+
+header {
+    width: 100%;
+    background-color: #0c88c2;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 2%; /* Thay đổi từ px sang % */
+    box-sizing: border-box;
+}
+
+    /* Ensuring no margin on the sides of the header */
+    header .logo-section {
+        display: flex;
+        align-items: center;
+    }
+
+    header .logo {
+        height: auto; /* Đặt chiều cao tự động để giữ tỷ lệ */
+        max-height: 80px; /* Giới hạn chiều cao tối đa */
+        margin-right: 10px;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 2.5vw; /* Sử dụng vw để làm cho kích thước chữ phản hồi */
+    }
+
+    header .user-buttons {
+        display: flex;
+        align-items: center;
+    }
+
+        header .user-buttons .btn {
+            background-color: white;
+            color: #0c88c2;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 1.2vw; /* Sử dụng vw cho nút */
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+            header .user-buttons .btn:hover {
+                background-color: #0a6a98;
+                color: white;
+            }
+
+.dropdown-item:focus, .dropdown-item:hover {
+    color: var(--bs-dropdown-link-hover-color);
+    background-color: #d6dade;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    color: var(--bs-dropdown-link-active-color);
+    text-decoration: none;
+    background-color: var(--bs-dropdown-link-active-bg);
+}
+
+.banner {
+    margin: 50px 2%; /* Thay đổi từ px sang % */
+    border-radius: 10px;
+    background-color: #0051BA;
+    width: 96%; /* Sử dụng % cho chiều rộng */
+}
+
+.tencd {
+    text-decoration: none;
+    color: #212529;
+}
+
+    .tencd:hover {
+        color: #0051BA;
+        font-weight: 200;
+    }
+
+.bg-custom {
+    background-color: #0078d4 !important;
+}
+
+div.row {
+    width: 100%; /* Thay đổi từ pixel sang % */
+    padding-left: 2%; /* Thay đổi từ px sang % */
+}
+
+footer {
+    background-color: #0c88c2;
+    padding: 20px 0; /* Thêm padding cho footer */
+}
+
+.marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    background-color: #023e73e6 !important;
+}
+
+    .marquee p {
+        display: inline-block;
+        animation: marquee 15s linear infinite !important;
+    }
+
+@keyframes marquee {
+    0% {
+        transform: translateX(1530px);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+.flex-grow-1{
+    max-width:1300px;
+    padding-left:20px;
+}
+.breadcrumb {
+    margin-left: 2%; /* Thay đổi từ px sang % */
+    font-size: 1.25rem;
+    padding-top: 10px;
+    margin-bottom: 0;
+}
+
+.breadcrumb-item a {
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item.active a {
+    color: #212529bf;
+}
+
+.breadcrumb-item a:hover {
+    color: #007bff;
+}
+
+.post-container {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    max-width: 1270px;
+    position: relative;
+}
+
+.avatar img {
+    max-width: 50px;
+    max-height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-header {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.post-date {
+    color: #6c757d;
+    top: 20px; /* Align it to the top */
+    right: 20px; /* Align it to the right */
+    font-size: 14px;
+    position: absolute;
+    margin-bottom: 15px;
+}
+
+.post-content, .reply-content {
+    margin-top: 25px;
+    font-size: 16px;
+}
+div.row{
+    padding-left:0;
+}
+.reply-box {
+    background-color: #b1b6bb;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.reply-input {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    border-radius: 4px;
+    resize: none;
+}
+
+.post-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    max-width: 1270px;
+}
+
+.send-btn {
+    margin-top: 20px;
+}
+
+.col-9 {
+    min-height: 200px;
+    width: 1000px;
+}
+.border-custom {
+    border-right: 1px solid #535659;
+}
+.unread {
+    font-weight: bold;
+    color: #046491;
+}
+
+.read {
+    font-weight:normal;
+    color: black;
+}
+.badge-sm {
+    font-size: 0.74em; 
+    padding: 0.25em 0.4em; 
+}
+.position-relative {
+    position: relative;
+}
+.position-absolute {
+    position: absolute;
+}
+.start-100 {
+    left: 100%; 
+}
+.translate-middle {
+    transform: translate(-50%, -50%);
+}
+.feedback-container {
+    margin:20px auto 20px auto;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.feedback-container h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+    .feedback-container .form-group {
+        margin-bottom: 20px;
+    }
+
+div.feedback-container div.form-group label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+div.feedback-container div.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    resize: none;
+    background-color: #fafafa;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+div.feedback-container div.form-group textarea:focus {
+    border-color: #007bff;
+}
+
+
+.feedback-container .btn-submit {
+    display: block;
+    width: 100%;
+    background-color: #006a9b;
+    color: #fff;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .feedback-container .btn-submit:hover {
+        background-color: #004085;
+    }
+
+.response-message {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+    .response-message.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .response-message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+.MenuTrang {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.pagination-container {
+    display: inline-flex;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+    .pagination-container .pagination {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+.pagination li {
+    display: inline;
+    background-color: white;
+}
+
+    .pagination li a {
+        display: inline-block;
+        padding: 8px 12px;
+        text-decoration: none;
+        color: #0c88c2;
+        border-right: 1px solid #ddd;
+        transition: background-color 0.2s;
+    }
+
+    .pagination li:last-child a {
+        border-right: none;
+    }
+
+    .pagination li a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .pagination li.active a {
+        background-color: #0c88c2;
+        color: white;
+        border: none;
+    }
+
+        .pagination li.active a:hover {
+            background-color: #0c88c2;
+            color: white;
+        }
+body {
+    animation: backgroundChange 5s infinite alternate;
+}
+
+@keyframes backgroundChange {
+    0% {
+        background-color: #ffcccc;
+    }
+
+    50% {
+        background-color: #cce7ff;
+    }
+
+    100% {
+        background-color: #ccffcc;
+    }
+}
+/* Snowflake effect */
+.snowflakes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.snowflake {
+    position: absolute;
+    top: -50px;
+    font-size: 2em;
+    color: white;
+    animation: fall linear infinite;
+}
+
+/* Random positions and speeds */
+@keyframes fall {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh);
+        opacity: 0.5;
+    }
+}
+
+.snowflake:nth-child(1) {
+    left: 10%;
+    animation-duration: 5s;
+}
+
+.snowflake:nth-child(2) {
+    left: 20%;
+    animation-duration: 7s;
+}
+
+.snowflake:nth-child(3) {
+    left: 30%;
+    animation-duration: 4s;
+}
+
+.snowflake:nth-child(4) {
+    left: 40%;
+    animation-duration: 6s;
+}
+
+.snowflake:nth-child(5) {
+    left: 50%;
+    animation-duration: 8s;
+}
+
+.snowflake:nth-child(6) {
+    left: 60%;
+    animation-duration: 5s;
+}
+
+.snowflake:nth-child(7) {
+    left: 70%;
+    animation-duration: 7s;
+}
+
+.snowflake:nth-child(8) {
+    left: 80%;
+    animation-duration: 4s;
+}
+
+.snowflake:nth-child(9) {
+    left: 90%;
+    animation-duration: 6s;
+}
+
+.snowflake:nth-child(10) {
+    left: 100%;
+    animation-duration: 8s;
+}
+/* Media Queries */
+@media (max-width: 768px) {
+    .feedback-container {
+        padding: 20px;
+    }
+
+    .feedback-container h2 {
+        font-size: 22px;
+    }
+
+    .feedback-container .btn-submit {
+        font-size: 16px;
+    }
+}
+@media (max-width: 768px) {
+    header {
+        flex-direction: column; /* Đặt header thành cột trên màn hình nhỏ */
+        align-items: flex-start; /* Căn trái */
+    }
+
+        header .logo {
+            max-height: 60px; /* Giảm chiều cao tối đa logo */
+        }
+
+        header h1 {
+            font-size: 5vw; /* Tăng kích thước chữ trên màn hình nhỏ */
+        }
+
+        header .user-buttons .btn {
+            font-size: 3vw; /* Tăng kích thước nút trên màn hình nhỏ */
+        }
+
+    .post-title {
+        font-size: 1.5rem; /* Điều chỉnh kích thước tiêu đề bài viết */
+    }
+
+    .post-content, .reply-content {
+        font-size: 0.9rem; /* Điều chỉnh kích thước chữ cho nội dung bài viết */
+    }
+
+    .feedback-container {
+        padding: 20px; /* Giảm padding trong hộp phản hồi */
+    }
+
+        .feedback-container h2 {
+            font-size: 20px; /* Giảm kích thước tiêu đề hộp phản hồi */
+        }
+}

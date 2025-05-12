@@ -1,0 +1,275 @@
+﻿﻿@model DienDanThaoLuan.Models.NguoiDung
+@{
+    ViewBag.Title = "Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Đăng ký</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Content/registerFormStyle.css?v=1">
+</head>
+<body>
+    <style type="text/css">
+        /* Snowflake effect */
+        .snowflakes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -50px;
+            font-size: 2em;
+            color: white;
+            animation: fall linear infinite;
+        }
+
+        /* Random positions and speeds */
+        @@keyframes fall {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0.5;
+            }
+        }
+
+        .snowflake:nth-child(1) {
+            left: 10%;
+            animation-duration: 5s;
+        }
+
+        .snowflake:nth-child(2) {
+            left: 20%;
+            animation-duration: 7s;
+        }
+
+        .snowflake:nth-child(3) {
+            left: 30%;
+            animation-duration: 4s;
+        }
+
+        .snowflake:nth-child(4) {
+            left: 40%;
+            animation-duration: 6s;
+        }
+
+        .snowflake:nth-child(5) {
+            left: 50%;
+            animation-duration: 8s;
+        }
+
+        .snowflake:nth-child(6) {
+            left: 60%;
+            animation-duration: 5s;
+        }
+
+        .snowflake:nth-child(7) {
+            left: 70%;
+            animation-duration: 7s;
+        }
+
+        .snowflake:nth-child(8) {
+            left: 80%;
+            animation-duration: 4s;
+        }
+
+        .snowflake:nth-child(9) {
+            left: 90%;
+            animation-duration: 6s;
+        }
+
+        .snowflake:nth-child(10) {
+            left: 100%;
+            animation-duration: 8s;
+        }
+        #password-strength-container {
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.3s ease;
+            height: 8px; /* Giữ đúng chiều cao progress bar */
+            overflow: hidden;
+        }
+
+            #password-strength-container.show {
+                transform: scaleY(1);
+            }
+
+        #password-strength-bar {
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+    </style>
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+    </div>
+    <section class="ftco-section">
+        <a href="@Url.Action("Index","Home")" style="font-weight: bold; font-size: 20px; color: lightgrey; position: relative;">Quay lại</a>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="login-wrap p-0">
+                        <h3 class="mb-3 text-center">REGISTER</h3>
+                        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                        {
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email", required = "required", name = "email" })
+                            </div>
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.TenDangNhap, new { @class = "form-control", @placeholder = "Username", required = "required", name = "username" })
+                            </div>
+                            <div class="form-group" style="margin-bottom:3px !important">
+                                @Html.PasswordFor(m => m.MatKhau, new { @class = "form-control", @id = "password-field", @placeholder = "Password", required = "required", name = "password" })
+                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                <div id="password-strength-container" class="progress mt-sm-1">
+                                    <div id="password-strength-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control", @placeholder = "Fullname", required = "required", name = "fullname" })
+                            </div>
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.SDT, new { @class = "form-control", @placeholder = "Phone Number", required = "required", name = "phonenumber" })
+                            </div>
+                            @Html.Partial("_PartialCaptcha")
+                            <p style="color: yellow; font-size:14px; margin-bottom:1.5px">@ViewBag.error</p>
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary submit px-3" id="submit-button">Sign-up</button>
+                            </div>
+                        }
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0" style="font-style: italic;">&mdash; Already have an account? &mdash;</p>
+                            <a href="@Url.Action("Login","Account")" class="px-1 py-1 mr-md-1 rounded" style=" color: #fbceb5; text-decoration: none; font-weight: bold; ">Sign In →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Khi nhấp vào icon span
+            $(".toggle-password").click(function () {
+                // Lấy input field liên kết với biểu tượng
+                var input = $($(this).attr("toggle"));
+
+                // Thay đổi thuộc tính type giữa 'password' và 'text'
+                if (input.attr("type") === "password") {
+                    input.attr("type", "text");
+                    $(this).removeClass("fa-eye").addClass("fa-eye-slash"); // Đổi icon thành icon ẩn mật khẩu
+                } else {
+                    input.attr("type", "password");
+                    $(this).removeClass("fa-eye-slash").addClass("fa-eye"); // Đổi icon thành icon hiển thị mật khẩu
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordField = document.getElementById('password-field');
+            const strengthContainer = document.getElementById('password-strength-container');
+            const strengthBar = document.getElementById('password-strength-bar');
+            const submitButton = document.getElementById('submit-button'); // Nút đăng ký
+
+            passwordField.addEventListener('input', function () {
+                const password = passwordField.value;
+
+                // Nếu người dùng có nhập, hiện progress
+
+                if (password.length > 0) {
+                    strengthContainer.classList.add('show');
+                } else {
+                    strengthContainer.classList.remove('show');
+                    strengthBar.style.width = '0%';
+                    strengthBar.className = 'progress-bar bg-danger';
+                    updateSubmitButtonState(false); // Vô hiệu hóa nút đăng ký nếu mật khẩu không đủ mạnh
+                    return;
+                }
+
+                // Tính độ mạnh
+                const lengthOK = password.length >= 8;
+                const hasLower = /[a-z]/.test(password);
+                const hasUpper = /[A-Z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+
+                let score = 0;
+                if (lengthOK) score++;
+                if (hasLower) score++;
+                if (hasUpper) score++;
+                if (hasNumber) score++;
+                if (hasSpecial) score++;
+
+                let color = "bg-danger";
+                let width = "20%";
+
+                if (score === 2) {
+                    color = "bg-warning";
+                    width = "40%";
+                } else if (score === 3) {
+                    color = "bg-info";
+                    width = "60%";
+                } else if (score === 4) {
+                    color = "#007bff";
+                    width = "80%";
+                } else if (score === 5) {
+                    color = "bg-success";
+                    width = "100%";
+                }
+
+                strengthBar.className = `progress-bar ${color}`;
+                strengthBar.style.width = width;
+                // Kiểm tra nếu mật khẩu đủ mạnh (từ 80% trở lên)
+                if (score >= 3) {
+                    updateSubmitButtonState(true); // Cho phép nút đăng ký khi mật khẩu đủ mạnh
+                } else {
+                    updateSubmitButtonState(false); // Vô hiệu hóa nút đăng ký nếu mật khẩu yếu
+                }
+            });
+            // Cập nhật trạng thái nút đăng ký
+            function updateSubmitButtonState(enabled) {
+                if (enabled) {
+                    submitButton.disabled = false;
+                    submitButton.style.cursor = 'pointer'; // Thêm kiểu con trỏ để rõ ràng
+                } else {
+                    submitButton.disabled = true;
+                    submitButton.style.cursor = 'not-allowed'; // Thêm kiểu con trỏ khi vô hiệu hóa
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+﻿<style>
+    /* Modal overlay */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Màu nền mờ */
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    /* Modal content */
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        text-align: center;
+    }
+
+    /* Nút đóng modal */
+    .close-modal {
+        position: absolute;
+        top: 5px;
+        right: 15px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+    }
+        .close-modal:hover {
+            color: #ff3333;
+        }
+    .btn-success {
+        background-color: #0c88c2;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+        .btn-success:hover {
+            background-color: #023e73e6;
+        }
+    .btn-xn {
+        background-color: #0c88c2;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-xn:hover {
+            background-color: #023e73;
+        }
+    select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+    #lydo {
+        margin: 20px;
+        display: none;
+        z-index: 1000;
+        flex-direction: column;
+        align-items: center
+    }
+</style>
+<!-- Modal tố cáo -->
+@if (Session["UserId"] != null)
+ {
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>Vui lòng chọn lý do tố cáo</h3><br />
+            @using (Html.BeginForm("LuuLyDoToCao", "Home", FormMethod.Post))
+            {
+                <select name="LyDoToCao" required>
+                    <option value="Spam">Spam</option>
+                    <option value="Nội dung không phù hợp">Nội dung không phù hợp</option>
+                    <option value="Ngôn từ đả kích">Ngôn từ đả kích</option>
+                    <option value="Lừa đảo, gian lận">Lừa đảo, gian lận</option>
+                </select>
+                <br /><br />
+                <input type="hidden"id="IdDoiTuong" name="IdDoiTuong" />
+                <button type="submit" class="btn btn-success">Xác nhận</button>
+            }
+        </div>
+    </div>
+}
+@if (Session["AdminId"] != null)
+{
+    <div class="modal-overlay" id="delModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeXacNhan()">&times;</span>
+            <div id="del" style="display:flex; flex-direction: column; align-items: center;">
+                <h4>Xác nhận xóa nội dung này?</h4><br />
+                <button class="btn-xn" onclick="showLyDoXoa()">Xác nhận</button>
+            </div>
+            <div id="lydo">
+                <h3>Vui lòng chọn lý do xóa</h3><br />
+                @using (Html.BeginForm("XoaBV_BL", "QLBaiViet", new { area = "Admin" }, FormMethod.Post))
+                {
+                    <select name="LyDoXoa" required>
+                        <option value="Spam">Spam</option>
+                        <option value="Nội dung không phù hợp">Nội dung không phù hợp</option>
+                        <option value="Ngôn từ đả kích">Ngôn từ đả kích</option>
+                        <option value="Lừa đảo, gian lận">Lừa đảo, gian lận</option>
+                    </select>
+                    <br /><br />
+                    <input type="hidden" id="IdDoiTuong" name="IdDoiTuong" />
+                    <button type="submit" class="btn btn-success">Xác nhận</button>
+                }
+            </div>
+        </div>
+    </div>
+}
+<script>
+    function showModal(id) {
+        document.getElementById("IdDoiTuong").value = id;
+        document.getElementById("reportModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("reportModal").style.display = "none";
+    }
+    function showXacNhan(id) {
+        document.getElementById("delModal").style.display = "flex";
+        document.getElementById("IdDoiTuong").value = id;
+    }
+    function showLyDoXoa() {
+        document.getElementById("del").style.display = "none";
+        document.getElementById("lydo").style.display = "flex";
+    }
+    function closeXacNhan() {
+        document.getElementById("delModal").style.display = "none";
+        document.getElementById("del").style.display = "flex";
+        document.getElementById("lydo").style.display = "none";
+    }
+
+</script>

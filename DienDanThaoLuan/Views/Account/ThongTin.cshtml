@@ -1,0 +1,183 @@
+﻿@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<BaiVietView>
+@{
+    ViewBag.Title = "ThongTin";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<style>
+
+    .cover-container {
+        position: relative;
+        height: 350px;
+        background-color: #f0f2f5;
+        margin-bottom: 60px;
+        margin-left: 12px;
+        margin-right: 37px;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cover-upload-icon {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+
+        .cover-upload-icon:hover {
+            background-color: #f0f2f5;
+        }
+
+    .profile-section {
+        position: relative;
+        max-width: 1000px;
+        margin: -135px 20px 0px 30px;
+        padding: 0 20px;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .profile-img-container {
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .profile-img-large {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 6px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        object-fit: cover;
+    }
+
+    .profile-info {
+        margin: 30px 0px;
+    }
+
+        .profile-info h1 {
+            font-size: 35px;
+        }
+
+    .profile-name {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 0;
+        color: #1c1e21;
+    }
+
+    .profile-role {
+        font-size: 15px;
+        color: #65676B;
+        margin-top: 5px;
+    }
+
+    .avatar-upload-icon {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background-color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="cover-container">
+    <img src="@Url.Content("~/Images/" + (ViewBag.ThongTin.AnhBia ?? "default-bg.jpg"))" alt="Cover" class="cover-image" style=" border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+</div>
+
+<div class="profile-section">
+    <div class="profile-header">
+        <div class="profile-img-container">
+            <img src="~/Images/@ViewBag.ThongTin.AnhDaiDien" alt="Avatar" class="profile-img-large">
+        </div>
+        <div class="profile-info">
+            <h1 class="profile-name">
+                @ViewBag.ThongTin.HoTen
+                @if (ViewBag.ThongTin.GioiTinh == "Nam")
+                {
+                    <i class="bi bi-gender-male text-primary"></i> <!-- Icon Nam với màu xanh -->
+                }
+                else if (ViewBag.ThongTin.GioiTinh == "Nữ")
+                {
+                    <i class="bi bi-gender-female text-danger"></i> <!-- Icon Nữ với màu đỏ -->
+                }
+                else
+                {
+                    <i class="bi bi-question-circle-fill text-secondary"></i> <!-- Icon dấu chấm hỏi với màu xám -->
+                }
+            </h1>
+            <div class="profile-role"> @(ViewBag.IsAd ? "Quản Trị Viên" : "Thành Viên")</div>
+        </div>
+    </div>
+</div>
+<div class="row my-5">
+    <!-- Left Column -->
+    <div class="col-md-12">
+        <!-- User's Posts -->
+        <div class="flex-grow-1 me-3 bg-white p-2 rounded">
+            <div class="d-flex justify-content-end mb-2">
+                <h2 style="font-weight: bold; margin-right: auto; margin-left: 5px; color: gray">BÀI VIẾT ĐÃ ĐĂNG</h2>
+            </div>
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning">Chưa có bài viết nào</div>
+            }
+            <!-- Post Items -->
+            @foreach (var t in Model)
+            {
+                <div class="mb-1 rounded-0 border-top pt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <img src="~/Images/avatar.jpg" alt="User Avatar" class="img-fluid rounded-circle" width="50">
+                                <div class="ms-3">
+                                    <h5 class="card-title mb-1">
+                                        <a href="@Url.Action("NDBaiViet", "BaiViet", new { id = t.BaiViet.MaBV })" class="text-decoration-none text-dark">@t.BaiViet.TieuDeBV</a>
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-1">Ngày đăng: <span class="text-muted">@t.BaiViet.NgayDang</span></p>
+                                <p class="mb-0">
+                                    Trả lời: <span class="text-muted">@t.SoBL</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="MenuTrang">
+            @Html.PagedListPager(Model, page => Url.Action("ThongTin", new { page = page, id = @ViewBag.Id }))
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,151 @@
+﻿
+@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<BaiVietView>
+<style>
+    .reply-btn {
+        bottom: 10px; /* Align it to the top */
+        right: 20px; /* Align it to the right */
+        font-size: 16px;
+        position: absolute;
+    }
+
+    .reply-to-content {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-left: 4px solid #007bff;
+        margin-bottom: 10px;
+        margin-top: 25px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+        .reply-to-content strong {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+    .original-comment {
+        color: #555;
+        font-style: italic;
+    }
+
+    div.reply-input {
+        height: auto;
+        margin-bottom: 30px;
+    }
+
+        div.reply-input textarea {
+            overflow: auto;
+        }
+
+        div.reply-input .btn-success {
+            margin-top: 10px; /* Tạo khoảng cách giữa textarea và nút */
+            background-color: #206daa;
+        }
+
+    .limit-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        word-wrap: break-word; /* Tự động xuống dòng nếu nội dung quá dài */
+    }
+
+    .limit-line-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2; /* Giới hạn tối đa 2 dòng */
+        word-wrap: break-word; /* Tự động xuống dòng nếu nội dung quá dài */
+        max-height: 3em; /* Đặt chiều cao tối đa cho 2 dòng */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .admin {
+        background-color: #e7f3ff; /* Màu nền nhẹ */
+        border-left: 5px solid #007bff; /* Đường viền bên trái màu xanh */
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3); /* Hiệu ứng đổ bóng */
+        border-radius: 5px; /* Bo góc */
+    }
+</style>
+
+@foreach (var bl in Model.Where(x => x.BinhLuan.IDCha == null))
+{
+    <div class="post-container @(bl.IsAdmin ? "admin" : "")" id="bl-@bl.BinhLuan.MaBL">
+        <div class="row">
+            <div class="col-2 d-flex flex-column align-items-center border-custom">
+                <div class="avatar">
+                    <img src="~/Images/@bl.BinhLuan.NguoiDung.AnhDaiDien" alt="Avatar" />
+                </div>
+                <div class="pt-2"><a class="post-header" style="text-decoration: none;" href="@Url.Action("ThongTin","Account", new { id = bl.BinhLuan.MaND})">@bl.BinhLuan.NguoiDung.TenDangNhap</a></div>
+            </div>
+            <div class="col-10">
+                <div class="post-date">@bl.BinhLuan.NgayGui</div>
+                <div class="reply-content limit-text resize-img">
+                    @Html.Raw(@bl.BinhLuan.NoiDung)
+                    @if (!string.IsNullOrEmpty(@bl.CodeContent))
+                    {
+                        <div class="code-container">
+                            <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                            <button class="run-button d-none" onclick="runCode(this)">Run</button>
+                            <pre><code class="language codeBlock">@Html.Raw(HttpUtility.HtmlEncode(@bl.CodeContent))</code></pre>
+                            <div class="copy-notification" id="copyNotification">Code copied to clipboard!</div>
+                        </div>
+                    }
+                </div>
+                <button class="btn btn-outline-primary btn-sm reply-btn" onclick="showReplyInput('@bl.BinhLuan.MaBL')">Reply</button>
+                @if (Session["UserId"] != null)
+                {
+                    <button class="report-button right-btn" onclick="showModal('@bl.BinhLuan.MaBL')">Tố cáo</button>
+                }
+                else if (Session["AdminId"] != null)
+                {
+                    <button class="report-button right-btn" onclick="showXacNhan('@bl.BinhLuan.MaBL')">Xóa</button>
+                }
+            <div class="reply-input" id="reply-input-@bl.BinhLuan.MaBL" style="display:none;">
+                @using (Html.BeginForm("ThemBL", "BaiViet", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    if (!string.IsNullOrEmpty(TempData["Loi"]?.ToString())) // Kiểm tra thông báo lỗi
+                    {
+                        <div class="response-message error">@TempData["Loi"]</div>
+                    }
+                    <input type="hidden" name="MaBV" value="@ViewData["MaBV"]" />
+                    <input type="hidden" name="IDCha" value="@bl.BinhLuan.MaBL" />
+                    <div class="reply-box mt-2">
+                        <textarea class="content reply-input" name="NoiDung" placeholder="Nhập câu trả lời"></textarea>
+                        <div class="form-group p-2">
+                            <button type="button" class="toggleCodeEditor btn btn-secondary">Hiển thị/Ẩn Mã Code</button>
+                        </div>
+                        <div class="codeEditorContainer" style="display: none;">
+                            <div class="form-group p-2">
+                                <textarea name="CodeContent" class="reply-input codeContent" placeholder="Nhập mã code"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mx-2">Gửi</button>
+                    </div>
+                }
+            </div>
+            </div>
+        </div>
+    </div>
+
+    @* Gọi partial view để hiển thị các reply của bình luận này *@
+    @Html.Partial("_RenderReplies", Model, new ViewDataDictionary { { "ParentId", bl.BinhLuan.MaBL }, { "MaBV", ViewData["MaBV"] }, { "replyTV", @bl.BinhLuan.NguoiDung.TenDangNhap } })
+}
+<div class="MenuTrang mb-4">
+    @Html.PagedListPager(Model, page => Url.Action("NDBaiViet", new { page = page, id = ViewData["MaBV"] }))
+</div>
+<script>
+    function showReplyInput(maBL) {
+        document.querySelectorAll('.reply-input').forEach(replyInput => {
+            if (replyInput.id !== 'reply-input-' + maBL) {
+                // Ẩn tất cả các phần reply-input khác
+                replyInput.style.display = 'none';
+            }
+        });
+        var replyInput = document.getElementById('reply-input-' + maBL);
+        replyInput.style.display = replyInput.style.display === 'none' ? 'block' : 'none';
+    }
+</script>

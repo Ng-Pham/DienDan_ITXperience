@@ -1,0 +1,60 @@
+﻿@model DienDanThaoLuan.Models.BaiViet
+
+@{
+    ViewBag.Title = "ThemBV";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@using (Html.BeginForm("ThemBV", "BaiViet", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="container mt-3 p-2 mb-4" style="background-color: white; border-radius:10px;">
+        <h2 class="text-center">Thêm Bài Viết Mới</h2>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(ViewBag.Loi)) // Kiểm tra thông báo lỗi
+        {
+            <div class="response-message error">@ViewBag.Loi</div>
+        }
+        <div class="form-group p-2">
+            <label>Chọn chủ đề:</label>
+            @Html.DropDownList("MaCD", ViewBag.MaCD as SelectList, "Chọn chủ đề", new { @class = "form-control mt-2", required = "required", id = "category" })
+        </div>
+        <div class="form-group p-2">
+            <label for="title">Tiêu đề bài viết:</label>
+            @Html.TextBoxFor(m => m.TieuDeBV, new { @class = "form-control mt-2", id = "title", placeholder = "Nhập tiêu đề bài viết", required = "required" })
+        </div>
+
+        <div class="form-group p-2">
+            <label for="content">Nội dung bài viết:</label>
+            <textarea name="NoiDung" class="content form-control mt-2" rows="10" placeholder="Nhập nội dung bài viết"></textarea>
+        </div>
+
+        <div class="form-group p-2">
+            <button type="button" class="toggleCodeEditor btn btn-secondary">Hiển thị/Ẩn Mã Code</button>
+        </div>
+
+        <div class="codeEditorContainer" style="display: none;">
+            <div class="form-group p-2">
+                <label for="codeContent">Mã code:</label>
+                <textarea name="CodeContent" class="codeContent form-control mt-2" rows="10" placeholder="Nhập mã code"></textarea>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end p-2">
+            <button type="submit" class="btn btn-primary">Gửi Bài Viết</button>
+        </div>
+    </div>
+}
+@Html.Partial("_EditorScripts")

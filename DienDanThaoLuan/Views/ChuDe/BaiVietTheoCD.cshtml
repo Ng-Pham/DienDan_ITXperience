@@ -1,0 +1,125 @@
+﻿
+@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<BaiVietView>
+@{
+    ViewBag.Title = "BaiVietTheoCD";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+<style>
+    .admin {
+        background-color: #e7f3ff; /* Màu nền nhẹ */
+        border-left: 2px solid #007bff; /* Đường viền bên trái màu xanh */
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3); /* Hiệu ứng đổ bóng */
+        border-radius: 5px; /* Bo góc */
+    }
+</style>
+
+@section breadcrumb{
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                @if (Model.Any())
+                {
+                    foreach (var ten in Model)
+                    {
+                        <li class="breadcrumb-item"><a href="@Url.Action("ChuDe", "ChuDe", new { id = ten.BaiViet.ChuDe.MaLoai })" style="text-decoration: none; color: black; font-size: 22px">@ten.BaiViet.ChuDe.LoaiCD.TenLoai</a></li>
+                        <li class="breadcrumb-item active" aria-current="page" style="font-size: 25px; color: black"><a href="@Url.Action("BaiVietTheoCD", "ChuDe", new { id = ten.BaiViet.ChuDe.MaCD})" style="text-decoration: none; color: black; font-size: 22px">@ten.BaiViet.ChuDe.TenCD</a></li>
+                        break;
+                    }
+                }
+                else
+                {
+                    <li class="breadcrumb-item"><a href="@Url.Action("ChuDe", "ChuDe", new { id = @ViewBag.MaLoai })">@ViewBag.TenLoai</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><a href="@Url.Action("BaiVietTheoCD", "ChuDe", new { id = @ViewBag.MaCD})">@ViewBag.TenCD</a></li>
+                }
+            </ol>
+        </nav>
+    </div>
+}
+<div class="row my-5">
+    <!-- Left Column -->
+    <div class="col-md-8">
+        <!-- Most Discussed Topics -->
+        <div class="flex-grow-1 me-3 bg-white p-2 rounded">
+            <div class="d-flex justify-content-end mb-2">
+                <div class="me-2">
+                    <button onclick="location.href='@Url.Action("ThemBV", "BaiViet")'" class="btn btn-primary">Thêm bài</button>
+                </div>
+                @if (Model.Any())
+                {
+                    foreach (var ten in Model)
+                    {
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Lọc</button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "newest", id=@ten.BaiViet.ChuDe.MaCD})">Mới nhất</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "oldest", id=@ten.BaiViet.ChuDe.MaCD })">Lâu nhất</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "az", id=@ten.BaiViet.ChuDe.MaCD })">Tiêu đề bài viết từ A-Z</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "za", id= @ten.BaiViet.ChuDe.MaCD })">Tiêu đề bài viết từ Z-A</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        break;
+                    }
+                }
+                else
+                {
+                    <div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Lọc</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "newest",id= ViewBag.MaCD})">Mới nhất</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "oldest", id=ViewBag.MaCD })">Lâu nhất</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "az", id=ViewBag.MaCD })">Tiêu đề bài viết từ A-Z</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Loc", "ChuDe", new { sortOrder = "za", id=ViewBag.MaCD })">Tiêu đề bài viết từ Z-A</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <!-- Post Items -->
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning">@ViewBag.Message</div>
+            }
+            else
+            {
+                foreach (var t in Model)
+                {
+                    <div class="mb-1 rounded-0 border-top pt-3 @(t.IsAdmin ? "admin" : "")">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <img src="~/Images/avatar.jpg" alt="User Avatar" class="img-fluid rounded-circle" width="50">
+                                    <div class="ms-3">
+                                        <h5 class="card-title mb-1"><a href="@Url.Action("NDBaiViet", "BaiViet", new { id = t.BaiViet.MaBV })" class="text-decoration-none text-dark">@t.BaiViet.TieuDeBV</a></h5>
+                                        <p class="text-muted">@t.BaiViet.NguoiDung.TenDangNhap</p>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <p class="mb-1">Ngày đăng: <span class="text-muted">@t.BaiViet.NgayDang</span></p>
+                                    <p class="mb-0">Trả lời: <span class="text-muted">@t.SoBL</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="MenuTrang">
+            @Html.PagedListPager(Model, page => Url.Action("BaiVietTheoCD", new { page = page, id = ViewBag.MaCD}))
+        </div>
+    </div>
+
+    <!-- Right Column (Admin Section) -->
+    <div class="col-md-4">
+        @Html.Action("PartialQTV", "Home")
+    </div>
+</div>
+
+

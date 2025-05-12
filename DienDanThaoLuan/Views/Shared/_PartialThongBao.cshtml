@@ -1,0 +1,16 @@
+﻿@model List<DienDanThaoLuan.Models.ThongBao>
+
+<div class="marquee text-white py-2">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var tb in Model)
+        {
+            <p class="mb-0">🌟❤️💕💗 @System.Xml.Linq.XElement.Parse(tb.NoiDung).Value💗💕❤️🌟</p>
+            break;
+        }
+    }
+    else
+    {
+        <p class="mb-0">Chào mừng đến với IT Xperience! Khám phá những kiến thức mới và kết nối với những người đam mê công nghệ!</p>
+    }
+</div>

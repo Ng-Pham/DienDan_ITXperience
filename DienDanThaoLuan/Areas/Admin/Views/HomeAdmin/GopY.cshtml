@@ -1,0 +1,125 @@
+﻿
+@using DienDanThaoLuan.Models;
+@using PagedList.Mvc;
+@model PagedList.PagedList<GopY>
+@{
+    ViewBag.Title = "Danh Sách Góp Ý";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-primary mb-4 text-center">DANH SÁCH GÓP Ý</h2>
+
+    @if (Model.Any())
+    {
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                @foreach (var item in Model)
+                {
+                    <div class="card mb-4 shadow-lg border-0 rounded-3
+                                @(item.TrangThai == true ? "card-seen" : "card-unseen")">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/Images/@item.NguoiDung.AnhDaiDien" alt="Avatar" class="avatar me-2" />
+                                <h5 class="card-title mb-0 text-dark">@item.NguoiDung.TenDangNhap</h5>
+                            </div>
+
+                            <!-- Nội dung nổi bật -->
+                            <div class="content-box p-4">
+                                <span class="font-weight-bold">Nội dung:</span>
+                                <p class="highlight-text mt-2 mb-0">@(Html.Raw(item.NoiDung))</p>
+                            </div>
+
+                            <div class="text-end mt-3">
+                                <small class="text-muted">
+                                    Ngày gửi:
+                                    @(item.NgayGui?.ToString("dd/MM/yyyy") ?? "N/A")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="MenuTrang">
+            @Html.PagedListPager(Model, page => Url.Action("GopY", new { page = page }))
+        </div>
+    }
+    else
+    {
+        <p class="text-muted text-center">Không có góp ý nào.</p>
+    }
+</div>
+
+<style>
+    /* Định dạng chung cho card */
+    .card-seen, .card-unseen {
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Giao diện cho card chưa xem */
+    .card-unseen {
+        border-left: 5px solid #007bff; /* Viền xanh dương nổi bật */
+        background-color: #e9f7ff; /* Nền xanh nhạt */
+    }
+
+    /* Giao diện cho card đã xem */
+    .card-seen {
+        border-left: 5px solid #0c88c2; /* Viền xanh đậm */
+        background-color: #f8f9fa; /* Nền xám sáng */
+    }
+
+    /* Định dạng cho nội dung */
+    .content-box {
+        background-color: #f1f3f5; /* Màu nền xám nhạt */
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 5px solid #0c88c2; /* Viền xanh đậm */
+        margin-top: 10px;
+    }
+
+    /* Định dạng nổi bật cho văn bản nội dung */
+    .highlight-text {
+        color: #333;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        font-weight: 500;
+        background-color: #d1ecf1; /* Màu nền xanh nhạt */
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Định dạng cho tiêu đề */
+    .card-title {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .avatar {
+        width: 50px; /* Kích thước ảnh */
+        height: 50px; /* Kích thước ảnh */
+        border-radius: 50%; /* Bo tròn ảnh */
+        object-fit: cover; /* Cắt ảnh cho phù hợp */
+        border: 2px solid #0c88c2; /* Viền ảnh đại diện */
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('@Url.Action("CapNhatTrangThai", "HomeAdmin", new { area = "Admin" })', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': '@Html.AntiForgeryToken()'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("Trạng thái đã được cập nhật.");
+            }
+        })
+        .catch(error => console.error("Có lỗi xảy ra:", error));
+    });
+</script>
