@@ -1,3 +1,10 @@
 ﻿@model  DienDanThaoLuan.Models.NguoiDung
 
-<h5 class="mb-1"><i>@Model.TenDangNhap</i> vừa mới gửi một bài viết:</h5>
+<h5 class="mb-1">
+    <i>
+        <a href="@Url.Action("ThongTin", "Account", new { area = "", id = Model.MaND })" class="text-decoration-none text-dark">
+            @Model.TenDangNhap
+        </a>
+    </i> vừa mới gửi một bài viết:
+</h5>
+

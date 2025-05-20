@@ -20,8 +20,10 @@
                                 @(item.TrangThai == true ? "card-seen" : "card-unseen")">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center mb-3">
-                                <img src="/Images/@item.NguoiDung.AnhDaiDien" alt="Avatar" class="avatar me-2" />
-                                <h5 class="card-title mb-0 text-dark">@item.NguoiDung.TenDangNhap</h5>
+                                <a href="@Url.Action("ThongTin", "Account", new {area = "", id = item.NguoiDung.MaND })" class="d-flex align-items-center text-decoration-none text-dark">
+                                    <img src="/Images/@item.NguoiDung.AnhDaiDien" alt="Avatar" class="avatar me-2" />
+                                    <h5 class="card-title mb-0 text-dark">@item.NguoiDung.TenDangNhap</h5>
+                                </a>
                             </div>
 
                             <!-- Nội dung nổi bật -->

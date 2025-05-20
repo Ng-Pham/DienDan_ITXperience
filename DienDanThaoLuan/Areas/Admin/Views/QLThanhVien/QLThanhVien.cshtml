@@ -47,7 +47,11 @@
                     <div class="card border-0 shadow-sm rounded">
                         <img src="/Images/@member.AnhDaiDien" alt="Avatar" class="card-img-top img-fluid mt-2" style="border-radius: 50px; width: 100px; height: 100px; object-fit: cover; margin: 0 auto;" />
                         <div class="card-body">
-                            <h5 class="card-title text-center">@member.TenDangNhap</h5>
+                            <h5 class="card-title text-center">
+                                <a href="@Url.Action("ThongTin", "Account", new { area = "", id = member.MaND })" class="text-decoration-none">
+                                    @member.TenDangNhap
+                                </a>
+                            </h5>
                             @if (string.IsNullOrEmpty(member.MatKhau))
                             {
                                 <p class="text-center text-danger">Tài khoản đã bị khóa</p>
