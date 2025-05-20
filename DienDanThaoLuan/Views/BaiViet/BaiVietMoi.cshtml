@@ -59,7 +59,11 @@
                                     <img src="~/Images/avatar.jpg" alt="User Avatar" class="img-fluid rounded-circle" width="50">
                                     <div class="ms-3">
                                         <h5 class="card-title mb-1"><a href="@Url.Action("NDBaiViet", "BaiViet", new { id = t.BaiViet.MaBV })" class="text-decoration-none text-dark">@t.BaiViet.TieuDeBV</a></h5>
-                                        <p class="text-muted">@t.BaiViet.NguoiDung.TenDangNhap</p>
+                                        <p class="text-muted">
+                                            <a class="text-decoration-none" style="color: #0c88c2" href="@Url.Action("ThongTin", "Account", new { id = t.BaiViet.NguoiDung.MaND })">
+                                                @t.BaiViet.NguoiDung.TenDangNhap
+                                            </a>
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="text-end">

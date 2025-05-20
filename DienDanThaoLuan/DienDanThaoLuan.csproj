@@ -359,7 +359,7 @@
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\_PartialCapcha.cshtml" />
+    <Content Include="Views\Account\_PartialCaptcha.cshtml" />
     <Content Include="Views\BaiViet\ThemBV.cshtml" />
     <Content Include="Views\Home\GopY.cshtml" />
     <Content Include="Views\Shared\_PartialThongBao.cshtml" />

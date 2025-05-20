@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -42,6 +43,19 @@ namespace DienDanThaoLuan.Controllers
                 if (string.IsNullOrEmpty(model.HoTen) || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.SDT))
                 {
                     TempData["ErrorMessage"] = "Vui lòng nhập thông tin hợp lệ!";
+                    return RedirectToAction("Index");
+                }
+                // Kiểm tra định dạng email @gmail.com
+                if (!Regex.IsMatch(model.Email, @"^[a-zA-Z0-9._%+-]+@gmail\.com$"))
+                {
+                    TempData["ErrorMessage"] = "Email không hợp lệ! Vui lòng sử dụng địa chỉ email @gmail.com.";
+                    return RedirectToAction("Index");
+                }
+
+                // Kiểm tra số điện thoại đúng 10 chữ số
+                if (!Regex.IsMatch(model.SDT, @"^\d{10}$"))
+                {
+                    TempData["ErrorMessage"] = "Số điện thoại không hợp lệ! Phải có đúng 10 chữ số.";
                     return RedirectToAction("Index");
                 }
                 if (member.Email != model.Email)

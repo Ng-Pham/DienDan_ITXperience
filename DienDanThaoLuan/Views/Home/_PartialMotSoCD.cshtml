@@ -15,7 +15,7 @@
             @foreach (var cd in group)
             {
                 <li class="list-group-item d-flex justify-content-between">
-                    <span>💬 <a href="@Url.Action("BaiVietTheoCD", "DienDanThaoLuan", new {id = cd.ChuDe.MaCD, tenloai = cd.ChuDe.LoaiCD.TenLoai})" class="tencd">@cd.ChuDe.TenCD</a></span>
+                    <span>💬 <a href="@Url.Action("BaiVietTheoCD", "ChuDe", new {id = cd.ChuDe.MaCD, tenloai = cd.ChuDe.LoaiCD.TenLoai})" class="tencd">@cd.ChuDe.TenCD</a></span>
                     <span class="posts"> Số bài: @cd.SoBai</span>
                 </li>
             }
