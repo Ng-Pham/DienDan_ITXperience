@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Text;
+using DienDanThaoLuan.Filters;
 using DienDanThaoLuan.Models;
 using Ganss.Xss;
 using PagedList;
@@ -15,6 +16,7 @@ using System.Xml.Linq;
 
 namespace DienDanThaoLuan.Controllers
 {
+    [SessionTimeout]
     public class BaiVietController : Controller
     {
         DienDanEntities db = new DienDanEntities();

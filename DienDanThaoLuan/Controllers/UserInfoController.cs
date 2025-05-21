@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Text;
+using DienDanThaoLuan.Filters;
 using DienDanThaoLuan.Models;
 using Ganss.Xss;
 using Serilog;
@@ -12,6 +13,7 @@ using System.Web.Mvc;
 
 namespace DienDanThaoLuan.Controllers
 {
+    [SessionTimeout]
     public class UserInfoController : Controller
     {
         private DienDanEntities db = new DienDanEntities();

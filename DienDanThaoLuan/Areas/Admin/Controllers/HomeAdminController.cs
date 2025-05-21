@@ -1,4 +1,5 @@
 ﻿using DienDanThaoLuan.Attributes;
+using DienDanThaoLuan.Filters;
 using DienDanThaoLuan.Models;
 using PagedList;
 using System;
@@ -9,7 +10,7 @@ using System.Web.Mvc;
 
 namespace DienDanThaoLuan.Areas.Admin.Controllers
 {
-    //[SessionTimeout]
+    [SessionTimeout]
     [Authorize]
     public class HomeAdminController : Controller
     {

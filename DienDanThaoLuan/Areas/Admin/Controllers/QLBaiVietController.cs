@@ -1,4 +1,5 @@
 ﻿using DienDanThaoLuan.Attributes;
+using DienDanThaoLuan.Filters;
 using DienDanThaoLuan.Models;
 using Ganss.Xss;
 using PagedList;
@@ -11,7 +12,7 @@ using System.Xml;
 
 namespace DienDanThaoLuan.Areas.Admin.Controllers
 {
-    //[SessionTimeout]
+    [SessionTimeout]
     [Authorize]
     public class QLBaiVietController : Controller
     {
