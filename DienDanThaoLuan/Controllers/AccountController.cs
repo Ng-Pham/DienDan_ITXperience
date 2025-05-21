@@ -17,16 +17,18 @@ using DienDanThaoLuan.Models;
 using PagedList;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
+using DienDanThaoLuan.Filters;
 
 namespace DienDanThaoLuan.Controllers
 {
+
     public class AccountController : Controller
     {
         DienDanEntities db = new DienDanEntities();
         private string clientId = ConfigurationManager.AppSettings["GoogleClientId"];
         private string clientSecret = ConfigurationManager.AppSettings["GoogleClientSecret"];
         private string redirectUri = ConfigurationManager.AppSettings["GoogleRedirectUri"];
-
+        [SessionTimeout]
         [Authorize]
         [HttpPost]
         public ActionResult KeepAlive()
@@ -41,7 +43,7 @@ namespace DienDanThaoLuan.Controllers
             // Kiểm tra nếu đã đăng nhập
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "DienDanThaoLuan");
+                return RedirectToAction("Index", "Home");
             }
 
             return View();

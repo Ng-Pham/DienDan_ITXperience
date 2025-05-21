@@ -1,4 +1,5 @@
-﻿using DienDanThaoLuan.Models;
+﻿using DienDanThaoLuan.Filters;
+using DienDanThaoLuan.Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 
 namespace DienDanThaoLuan.Controllers
 {
+    [SessionTimeout]
     public class ChuDeController : Controller
     {
         // GET: ChuDe

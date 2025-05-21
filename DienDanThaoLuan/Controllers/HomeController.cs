@@ -1,4 +1,5 @@
-﻿using DienDanThaoLuan.Models;
+﻿using DienDanThaoLuan.Filters;
+using DienDanThaoLuan.Models;
 using Ganss.Xss;
 using PagedList;
 using System;
@@ -9,6 +10,7 @@ using System.Web.Mvc;
 
 namespace DienDanThaoLuan.Controllers
 {
+    [SessionTimeout]
     public class HomeController : Controller
     {
         DienDanEntities db = new DienDanEntities();
