@@ -497,7 +497,7 @@ namespace DienDanThaoLuan.Controllers
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    ViewBag.error = "Không thể lấy thông tin email từ Google.";
+                    TempData["Error"] = "Không thể lấy thông tin email từ Google.";
                     return RedirectToAction("Login"); // lỗi
                 }
 
@@ -533,17 +533,17 @@ namespace DienDanThaoLuan.Controllers
                 }
                 else if(user.KhoaDenKhi != null && user.KhoaDenKhi > DateTime.Now)
                 {
-                    ViewBag.error = $"Tài khoản bị khóa đến {user.KhoaDenKhi.Value.ToString("HH:mm:ss")}. Vui lòng thử lại sau.";
+                    TempData["Error"] = $"Tài khoản bị khóa đến {user.KhoaDenKhi.Value.ToString("HH:mm:ss")}. Vui lòng thử lại sau.";
                     return RedirectToAction("Login");
                 }
                 else if (user.TrangThai == false)
                 {
-                    ViewBag.error = "Tài khoản này đã bị khóa!!";
+                    TempData["Error"] = "Tài khoản này đã bị khóa!!";
                     return RedirectToAction("Login");
                 }
                 else if (user.LoaiND.TenLoai == "admin")
                 {
-                    ViewBag.error = "Tài khoản này chỉ có thể đăng nhập qua mật khẩu tài khoản";
+                    TempData["Error"] = "Tài khoản này chỉ có thể đăng nhập qua mật khẩu tài khoản";
                     return RedirectToAction("Login");
                 }
                 user.SoLanDNThatBai = 0;
