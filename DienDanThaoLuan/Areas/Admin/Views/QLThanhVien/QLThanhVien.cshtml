@@ -52,7 +52,7 @@
                                     @member.TenDangNhap
                                 </a>
                             </h5>
-                            @if (string.IsNullOrEmpty(member.MatKhau))
+                            @if (!member.TrangThai)
                             {
                                 <p class="text-center text-danger">Tài khoản đã bị khóa</p>
                             }
@@ -64,7 +64,7 @@
                             <p class="text-center text-muted">Ngày tham gia: @(member.NgayThamGia?.ToString("dd/MM/yyyy") ?? "N/A")</p>
                             <p class="text-center text-muted">Bài viết: @count bài</p>
                             <div class="d-flex justify-content-center mt-3">
-                                @if (string.IsNullOrEmpty(member.MatKhau))
+                                @if (!member.TrangThai)
                                 {
                                     <button class="btn btn-danger" disabled>Khóa Tài Khoản</button>
                                 }
@@ -94,7 +94,8 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h3>Xác Nhận</h3>
-            <p style="font-size:20px">Bạn có chắc chắn muốn khóa tài khoản này?</p>
+            <p style="font-size:20px; margin:0;">Bạn có chắc chắn muốn khóa tài khoản này?</p>
+            <p style="font-size:20px">Nếu khóa sẽ không thể mở lại!</p>
             <button id="confirmButton" class="btn btn-danger mb-2">Khóa Tài Khoản</button>
             <button class="btn btn-secondary" onclick="closeModal()">Hủy</button>
         </div>
