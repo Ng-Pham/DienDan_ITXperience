@@ -241,6 +241,7 @@
     <Compile Include="Models\NguoiDung.cs">
       <DependentUpon>DienDan.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ResetPasswordViewModel.cs" />
     <Compile Include="Models\SoBaiChuDe.cs" />
     <Compile Include="Models\ThongBao.cs">
       <DependentUpon>DienDan.tt</DependentUpon>
@@ -369,6 +370,7 @@
     <Content Include="Views\UserInfo\Info.cshtml" />
     <Content Include="Views\Account\BaiVietCuaToi.cshtml" />
     <Content Include="Views\Account\ThongTin.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

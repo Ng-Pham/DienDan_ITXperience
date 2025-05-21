@@ -87,6 +87,9 @@
           <Property Name="SoLanDNThatBai" Type="int" />
           <Property Name="LanDNThatBaiCuoi" Type="datetime" />
           <Property Name="KhoaDenKhi" Type="datetime" />
+          <Property Name="ResetToken" Type="nvarchar" MaxLength="100" />
+          <Property Name="TokenExpiry" Type="datetime" />
+          <Property Name="TrangThai" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ThongBao">
           <Key>
@@ -335,6 +338,9 @@
           <NavigationProperty Name="LoaiND" Relationship="Self.FK__NguoiDung__MaLoa__398D8EEE" FromRole="NguoiDung" ToRole="LoaiND" />
           <NavigationProperty Name="BinhLuans" Relationship="DienDanModel.FK__BinhLuan__MaND__5FB337D6" FromRole="NguoiDung" ToRole="BinhLuan" />
           <NavigationProperty Name="ThongBaos" Relationship="DienDanModel.FK__ThongBao__MaND__68487DD7" FromRole="NguoiDung" ToRole="ThongBao" />
+          <Property Name="ResetToken" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TokenExpiry" Type="DateTime" Precision="3" />
+          <Property Name="TrangThai" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__BaiViet__MaCD__4222D4EF">
           <End Role="ChuDe" Type="Self.ChuDe" Multiplicity="0..1" />
@@ -585,6 +591,9 @@
           <EntitySetMapping Name="NguoiDungs">
             <EntityTypeMapping TypeName="DienDanModel.NguoiDung">
               <MappingFragment StoreEntitySet="NguoiDung">
+                <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />
+                <ScalarProperty Name="TokenExpiry" ColumnName="TokenExpiry" />
+                <ScalarProperty Name="ResetToken" ColumnName="ResetToken" />
                 <ScalarProperty Name="MaND" ColumnName="MaND" />
                 <ScalarProperty Name="HoTen" ColumnName="HoTen" />
                 <ScalarProperty Name="AnhDaiDien" ColumnName="AnhDaiDien" />

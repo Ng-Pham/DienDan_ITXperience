@@ -15,12 +15,17 @@ using System.Web.Mvc;
 using System.Web.Security;
 using DienDanThaoLuan.Models;
 using PagedList;
+using System.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace DienDanThaoLuan.Controllers
 {
     public class AccountController : Controller
     {
         DienDanEntities db = new DienDanEntities();
+        private string clientId = ConfigurationManager.AppSettings["GoogleClientId"];
+        private string clientSecret = ConfigurationManager.AppSettings["GoogleClientSecret"];
+        private string redirectUri = ConfigurationManager.AppSettings["GoogleRedirectUri"];
 
         [Authorize]
         [HttpPost]
@@ -74,7 +79,7 @@ namespace DienDanThaoLuan.Controllers
                 ViewBag.username = username;
                 return View();
             }
-            if (memberAcc.MatKhau == null)
+            if (memberAcc.TrangThai == false)
             {
                 ViewBag.error = "Tài khoản này đã bị khóa!!";
                 ViewBag.username = username;
@@ -120,20 +125,19 @@ namespace DienDanThaoLuan.Controllers
         }
         private void SendLockoutEmail(string toEmail, string username, DateTime lockoutUntil)
         {
-            var fromAddress = new MailAddress("tnn231223@gmail.com", "Diễn Đàn Thảo Luận Cảnh Báo");
+            var fromAddress = new MailAddress("2224802010514@student.tdmu.edu.vn", "Diễn Đàn IT Xperience Cảnh Báo");
             var toAddress = new MailAddress(toEmail);
-            const string fromPassword = "njic xpiv pzwm dugg"; // dùng app password, không dùng password thật
             string subject = "Thông báo: Tài khoản bị khóa tạm thời";
             string body = $@"
-            Xin chào {username},
+                            Xin chào {username},
 
-            Tài khoản của bạn đã bị khóa tạm thời do nhập sai mật khẩu quá 5 lần.
-            Vui lòng thử đăng nhập lại sau thời gian khóa: {lockoutUntil:HH:mm:ss dd/MM/yyyy}.
+                            Tài khoản của bạn đã bị khóa tạm thời do nhập sai mật khẩu quá 5 lần.
+                            Vui lòng thử đăng nhập lại sau thời gian khóa: {lockoutUntil:HH:mm:ss dd/MM/yyyy}.
 
-            Nếu bạn không thực hiện các lần đăng nhập này, vui lòng liên hệ quản trị viên ngay lập tức.
+                            Nếu bạn không thực hiện các lần đăng nhập này, vui lòng liên hệ quản trị viên ngay lập tức.
 
-            Trân trọng,
-            Bộ phận hỗ trợ";
+                            Trân trọng,
+                            Bộ phận hỗ trợ";
 
             var smtp = new SmtpClient
             {
@@ -142,7 +146,9 @@ namespace DienDanThaoLuan.Controllers
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                Credentials = new NetworkCredential(
+                    ConfigurationManager.AppSettings["SmtpEmail"],
+                    ConfigurationManager.AppSettings["SmtpAppPassword"])
             };
 
             using (var message = new MailMessage(fromAddress, toAddress)
@@ -257,7 +263,8 @@ namespace DienDanThaoLuan.Controllers
                         tv.AnhDaiDien = "avatar.jpg";
                         tv.MatKhau = BCrypt.Net.BCrypt.HashPassword(tv.MatKhau);
                         tv.SoLanDNThatBai = 0;
-                        tv.MaLoaiND = db.LoaiNDs.Where(l => l.TenLoai == "user").Select(l => l.MaLoaiND).FirstOrDefault(); ; // Mặc định là thành viên
+                        tv.MaLoaiND = db.LoaiNDs.Where(l => l.TenLoai == "user").Select(l => l.MaLoaiND).FirstOrDefault(); // Mặc định là thành viên
+                        tv.TrangThai = true; // Mặc định là hoạt động
                         // Thêm thành viên mới vào database
                         db.NguoiDungs.Add(tv);
                         db.SaveChanges();
@@ -316,70 +323,239 @@ namespace DienDanThaoLuan.Controllers
                 int remainingTime = 30 - (int)(DateTime.Now - user.LastPasswordResetRequest.Value).TotalSeconds;
                 return Json(new { success = false, message = "Vui lòng đợi 30 giây trước khi gửi yêu cầu mới.", remainingTime = remainingTime });
             }
-
-            // Tạo mật khẩu mới ngẫu nhiên
-            var newPassword = GenerateRandomPassword();
-            user.MatKhau = BCrypt.Net.BCrypt.HashPassword(newPassword); // Cập nhật mật khẩu mới vào database
+            string token = Guid.NewGuid().ToString();
+            user.ResetToken = token;
+            user.TokenExpiry = DateTime.Now.AddMinutes(30); // Token hết hạn sau 1 giờ
             user.LastPasswordResetRequest = DateTime.Now; // Cập nhật thời gian gửi yêu cầu cuối cùng
             db.SaveChanges();
-            Log.Information("User {user.TenDangNhap} đã đổi mật khẩu thành công", user.TenDangNhap);
+
+            var resetLink = Url.Action("ResetPassword", "Account", new { email = user.Email, token = token }, protocol: Request.Url.Scheme);
 
             // Gửi email mật khẩu mới cho người dùng
-            SendPasswordResetEmail(user.Email, newPassword);
+            SendResetEmail(user.Email, resetLink);
 
-            return Json(new { success = true, message = "Mật khẩu mới đã được gửi đến email của bạn!", remainingTime = 30 });
+            return Json(new { success = true, message = "Link đặt lại mật khẩu đã được gửi tới email của bạn!", remainingTime = 30 });
         }//---Hoàn thành chức năng quên mật khẩu
 
-        // Hàm tạo mật khẩu ngẫu nhiên
-        private string GenerateRandomPassword()
+        public void SendResetEmail(string toEmail, string link)
         {
-            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            StringBuilder res = new StringBuilder();
-            Random rnd = new Random();
-            for (int i = 0; i < 8; i++)
-            {
-                res.Append(valid[rnd.Next(valid.Length)]);
-            }
-            return res.ToString();
-        }
-        // Hàm gửi email chứa mật khẩu mới
-        private void SendPasswordResetEmail(string toEmail, string newPassword)
-        {
-            var fromEmail = "2224802010927@student.tdmu.edu.vn"; // Email của bạn
-            var fromPassword = "juak jlej ftgf ncpk"; // Mật khẩu của bạn
-            var subject = "Mật khẩu mới của bạn";
-            var body = $"Mật khẩu mới của bạn là: {newPassword}";
+            var fromAddress = new MailAddress("2224802010514@student.tdmu.edu.vn", "Diễn đàn IT Xperience");
+            var toAddress = new MailAddress(toEmail);
+            const string subject = "Yêu cầu đặt lại mật khẩu";
+            string body = $@"<h2>Yêu cầu đặt lại mật khẩu</h2>
+                           <p>Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu của bạn:</p>
+                           <p><a href='{link}'>Đặt lại mật khẩu</a></p>
+                           <p>Liên kết này sẽ hết hạn sau 30 phút.</p>";
 
-            // Cấu hình SMTP trong controller
-            var smtpClient = new SmtpClient("smtp.gmail.com")
+            var smtp = new SmtpClient
             {
+                Host = "smtp.gmail.com",
                 Port = 587,
-                Credentials = new NetworkCredential(fromEmail, fromPassword),
-                EnableSsl = true
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(
+                                    ConfigurationManager.AppSettings["SmtpEmail"],
+                                    ConfigurationManager.AppSettings["SmtpAppPassword"])
             };
 
-            // Tạo và gửi email
-            var mailMessage = new MailMessage
+            using (var message = new MailMessage(fromAddress, toAddress)
             {
-                From = new MailAddress(fromEmail),
                 Subject = subject,
                 Body = body,
-                IsBodyHtml = true, // Nếu muốn gửi mail dạng HTML
+                IsBodyHtml = true
+            })
+            {
+                smtp.Send(message);
+            }
+        }
+        [HttpGet]
+        public ActionResult ResetPassword(string email, string token)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            {
+                ViewBag.Message = "Liên kết không hợp lệ.";
+                return View();
+            }
+            var user = db.NguoiDungs.FirstOrDefault(u =>
+                u.Email == email &&
+                u.ResetToken == token &&
+                u.TokenExpiry > DateTime.Now);
+            if (user == null)
+            {
+                ViewBag.Message = "Liên kết không hợp lệ hoặc đã hết hạn.";
+                return View();
+            }
+            var model = new ResetPasswordViewModel
+            {
+                Email = email,
+                Token = token
             };
-
-            mailMessage.To.Add(toEmail);
-
-            // Gửi mail
-            try
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
             {
-                smtpClient.Send(mailMessage);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                // Gom lỗi thành chuỗi cách nhau bằng dấu xuống dòng hoặc dấu phẩy
+                var errorMessage = string.Join(" | ", errors);
+
+                return Json(new { success = false, message = errorMessage });
             }
-            catch (Exception ex)
+
+            var user = db.NguoiDungs.FirstOrDefault(u =>
+                u.Email == model.Email &&
+                u.ResetToken == model.Token &&
+                u.TokenExpiry > DateTime.Now);
+
+            if (user != null)
             {
-                // Xử lý lỗi nếu việc gửi mail thất bại
-                ViewBag.Message = $"Đã xảy ra lỗi khi gửi email: {ex.Message}";
+                if (!IsPasswordStrongEnough(model.NewPassword))
+                {
+                    ViewBag.Message = "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.";
+                    return Json(new { success = false, message = "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!!" });
+                }
+                try
+                {
+                    user.MatKhau = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                    user.ResetToken = null;
+                    user.TokenExpiry = null;
+                    db.SaveChanges();
+
+                    Log.Information("Người dùng {Username} đã đặt lại mật khẩu thành công.", user.TenDangNhap);
+                    return Json(new { success = true, message = "Mật khẩu đã được cập nhật thành công." });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Lỗi khi cập nhật mật khẩu cho người dùng {Email}", model.Email);
+                    return Json(new { success = false, message = "Có lỗi xảy ra. Vui lòng thử lại sau!!" });
+                }
             }
-        }//--- Hoàn thành chức năng gửi mail khi quên mật khẩu
+            else
+            {
+                return Json(new { success = false, message = "Liên kết không hợp lệ hoặc đã hết hạn." });
+            }
+        }
+        public ActionResult LoginGoogle(bool isRegistering = false)
+        {
+            string state = isRegistering ? "register" : "login";
+
+            var redirectUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+                $"client_id={clientId}" +
+                $"&redirect_uri={redirectUri}" +
+                $"&response_type=code" +
+                $"&scope=email%20profile" +
+                $"&state={state}";
+
+            return Redirect(redirectUrl);
+        }
+        public async Task<ActionResult> GoogleCallback(string code, string state)
+        {
+            bool isRegistering = state == "register";
+            if (string.IsNullOrEmpty(code))
+            {
+                return RedirectToAction("Login"); // hoặc trang lỗi
+            }
+
+            // Đổi code lấy access token
+            using (var client = new HttpClient())
+            {
+                var values = new FormUrlEncodedContent(new[]
+                {
+                new KeyValuePair<string, string>("code", code),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("client_secret", clientSecret),
+                new KeyValuePair<string, string>("redirect_uri", redirectUri),
+                new KeyValuePair<string, string>("grant_type", "authorization_code"),
+            });
+
+                var response = await client.PostAsync("https://oauth2.googleapis.com/token", values);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                JObject tokenObj = JObject.Parse(responseString);
+                string accessToken = tokenObj.Value<string>("access_token");
+
+                if (accessToken == null)
+                    return RedirectToAction("Login"); // lỗi
+
+                // Lấy thông tin user
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+                var userInfoResponse = await client.GetAsync("https://www.googleapis.com/oauth2/v2/userinfo");
+                var userInfoString = await userInfoResponse.Content.ReadAsStringAsync();
+
+                JObject userObj = JObject.Parse(userInfoString);
+                string email = userObj.Value<string>("email");
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    ViewBag.error = "Không thể lấy thông tin email từ Google.";
+                    return RedirectToAction("Login"); // lỗi
+                }
+
+                // Lấy username trước dấu @ và cắt 15 ký tự
+                string username = email.Split('@')[0];
+                if (username.Length > 15)
+                    username = username.Substring(0, 15);
+
+                var user = db.NguoiDungs.FirstOrDefault(u => u.TenDangNhap == username);
+
+                if (user == null)
+                {
+                    if (!isRegistering)
+                    {
+                        TempData["Error"] = "Tài khoản chưa tồn tại. Vui lòng đăng ký trước.";
+                        return RedirectToAction("Login");
+                    }
+
+                    // Chỉ tạo user mới nếu isRegistering == true
+                    user = new NguoiDung
+                    {
+                        TenDangNhap = username,
+                        Email = email,
+                        NgayThamGia = DateTime.Now,
+                        AnhDaiDien = "avatar.jpg",
+                        SoLanDNThatBai = 0,
+                        MaLoaiND = db.LoaiNDs.Where(l => l.TenLoai == "user").Select(l => l.MaLoaiND).FirstOrDefault(),
+                        TrangThai = true
+                    };
+
+                    db.NguoiDungs.Add(user);
+                    db.SaveChanges();
+                }
+                else if(user.KhoaDenKhi != null && user.KhoaDenKhi > DateTime.Now)
+                {
+                    ViewBag.error = $"Tài khoản bị khóa đến {user.KhoaDenKhi.Value.ToString("HH:mm:ss")}. Vui lòng thử lại sau.";
+                    return RedirectToAction("Login");
+                }
+                else if (user.TrangThai == false)
+                {
+                    ViewBag.error = "Tài khoản này đã bị khóa!!";
+                    return RedirectToAction("Login");
+                }
+                else if (user.LoaiND.TenLoai == "admin")
+                {
+                    ViewBag.error = "Tài khoản này chỉ có thể đăng nhập qua mật khẩu tài khoản";
+                    return RedirectToAction("Login");
+                }
+                user.SoLanDNThatBai = 0;
+                user.KhoaDenKhi = null;
+                db.SaveChanges();
+                Session["UserId"] = user.MaND.ToString();
+                Session["Role"] = "Member"; // lưu quyền
+                FormsAuthentication.SetAuthCookie(user.TenDangNhap, false);
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
 
         [Authorize]
         public ActionResult BaiVietCuaToi(int? page)
