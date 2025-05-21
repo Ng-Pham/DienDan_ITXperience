@@ -68,7 +68,7 @@ namespace DienDanThaoLuan.Areas.Admin.Controllers
             var ds = db.NguoiDungs.Where(l => l.MaND == id).SingleOrDefault();
             if (ds != null)
             {
-                ds.MatKhau = null;
+                ds.TrangThai = false;
                 db.SaveChanges();
                 TempData["ThongBao"] = "Đã khóa tài khoản";
             }

@@ -38,6 +38,9 @@ namespace DienDanThaoLuan.Models
         public Nullable<int> SoLanDNThatBai { get; set; }
         public Nullable<System.DateTime> LanDNThatBaiCuoi { get; set; }
         public Nullable<System.DateTime> KhoaDenKhi { get; set; }
+        public string ResetToken { get; set; }
+        public Nullable<System.DateTime> TokenExpiry { get; set; }
+        public bool TrangThai { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BaiViet> BaiViets { get; set; }
