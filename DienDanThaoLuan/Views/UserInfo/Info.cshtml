@@ -307,16 +307,26 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Đổi mật khẩu</h5>
+                    @if (!string.IsNullOrEmpty(Model.MatKhau))
+                    {
+                        <h5 class="card-title">Đổi mật khẩu</h5>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">Thêm mật khẩu cho tài khoản</h5>
+                    }
                     @using (Html.BeginForm("ChangePassword", "UserInfo", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
                     {
                         @Html.AntiForgeryToken()
-                        <div class="mb-3">
-                            <label for="currentPassword" class="form-label" style="margin-bottom: 1rem">Mật khẩu hiện tại</label>
-                            <input type="password" name="currentPassword" class="form-control" required>
-                            <div class="invalid-feedback">Vui lòng nhập mật khẩu hiện tại.</div>
-                        </div>
+                        if (!string.IsNullOrEmpty(Model.MatKhau))
+                        {
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label" style="margin-bottom: 1rem">Mật khẩu hiện tại</label>
+                                <input type="password" name="currentPassword" class="form-control" required>
+                                <div class="invalid-feedback">Vui lòng nhập mật khẩu hiện tại.</div>
+                            </div>
 
+                        }
                         <div class="mb-3">
                             <label for="newPassword" class="form-label" style="margin-bottom: 1rem">Mật khẩu mới</label>
                             <input type="password" id="password-field" name="newPassword" class="form-control" required>

@@ -49,7 +49,7 @@ namespace DienDanThaoLuan.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Login(string username, string password)
+        public async Task<ActionResult> Login(string loginInput, string password)
         {
             string captchaResponse = Request["g-recaptcha-response"];
             bool isCaptchaValid = await IsCaptchaValid(captchaResponse);
@@ -60,35 +60,35 @@ namespace DienDanThaoLuan.Controllers
                 return View();
             }
             //check null tài khoản && mật khẩu
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(loginInput) || string.IsNullOrWhiteSpace(password))
             {
                 ViewBag.error = "*Không được để trống tài khoản hoặc mật khẩu!!!";
                 return View();
             }
             //Lấy dữ liệu tài khoản mật khẩu
-            var memberAcc = db.NguoiDungs.SingleOrDefault(m => m.TenDangNhap.ToLower() == username.ToLower());
+            var memberAcc = db.NguoiDungs.SingleOrDefault(m => m.TenDangNhap.ToLower() == loginInput.ToLower() || m.Email == loginInput);
 
             //Check tồn tại tài khoản
             if (memberAcc == null)
             {
                 ViewBag.error = "Tài khoản không tồn tại!!";
-                ViewBag.username = username;
+                ViewBag.loginInput = loginInput;
                 return View();
             }
             if (memberAcc.KhoaDenKhi != null && memberAcc.KhoaDenKhi > DateTime.Now)
             {
                 ViewBag.error = $"Tài khoản bị khóa đến {memberAcc.KhoaDenKhi.Value.ToString("HH:mm:ss")}. Vui lòng thử lại sau.";
-                ViewBag.username = username;
+                ViewBag.loginInput = loginInput;
                 return View();
             }
             if (memberAcc.TrangThai == false)
             {
                 ViewBag.error = "Tài khoản này đã bị khóa!!";
-                ViewBag.username = username;
+                ViewBag.loginInput = loginInput;
                 return View();
-            }
+            }            
             //Check đúng sai tài khoản mật khẩu
-            if (!BCrypt.Net.BCrypt.Verify(password, memberAcc.MatKhau) || memberAcc.TenDangNhap != username)
+            if (!BCrypt.Net.BCrypt.Verify(password, memberAcc.MatKhau))
             {
                 memberAcc.SoLanDNThatBai++;
                 memberAcc.LanDNThatBaiCuoi = DateTime.Now;
@@ -100,29 +100,29 @@ namespace DienDanThaoLuan.Controllers
                     SendLockoutEmail(memberAcc.Email, memberAcc.TenDangNhap, memberAcc.KhoaDenKhi.Value);
                     ViewBag.error = "Bạn đã nhập sai 5 lần. Tài khoản bị khóa 5 phút.";
                 }
-                else
+                else 
                 {
                     ViewBag.error = $"Sai tên tài khoản hoặc mật khẩu!! Lần nhập sai {memberAcc.SoLanDNThatBai}/5. Vui lòng thử lại.";
                     db.SaveChanges();
                 }
-                ViewBag.username = username;
+                ViewBag.loginInput = loginInput;
                 return View();
             }
             //Đăng nhập thành công
             memberAcc.SoLanDNThatBai = 0;
             memberAcc.KhoaDenKhi = null;
             db.SaveChanges();
-            FormsAuthentication.SetAuthCookie(username, false);
+            FormsAuthentication.SetAuthCookie(memberAcc.TenDangNhap, false);
             if (memberAcc.LoaiND.TenLoai == "admin")
             {
                 Session["AdminId"] = memberAcc.MaND.ToString();
                 Session["Role"] = "Admin"; // lưu quyền
-                Log.Information("AdminId {Username} đã đăng nhập thành công", username);
+                Log.Information("AdminId {Username} đã đăng nhập thành công", memberAcc.TenDangNhap);
                 return RedirectToAction("Index", "Home");
             }
             Session["UserId"] = memberAcc.MaND.ToString();
             Session["Role"] = "Member"; // lưu quyền
-            Log.Information("UserId {Username} đã đăng nhập thành công", username);
+            Log.Information("UserId {Username} đã đăng nhập thành công", memberAcc.TenDangNhap);
             return RedirectToAction("Index", "Home");
         }
         private void SendLockoutEmail(string toEmail, string username, DateTime lockoutUntil)

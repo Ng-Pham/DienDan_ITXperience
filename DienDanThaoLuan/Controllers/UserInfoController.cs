@@ -117,11 +117,15 @@ namespace DienDanThaoLuan.Controllers
             }            
             else
             {
-                if (!BCrypt.Net.BCrypt.Verify(currentPassword, member.MatKhau))
+                if(!string.IsNullOrEmpty(member.MatKhau))
                 {
-                    TempData["ErrorMessage"] = "Mật khẩu hiện tại không đúng!";
-                }
-                else if (newPassword.Length < 8)
+                    if (!BCrypt.Net.BCrypt.Verify(currentPassword, member.MatKhau))
+                    {
+                        TempData["ErrorMessage"] = "Mật khẩu hiện tại không đúng!";
+                        return RedirectToAction("Index");
+                    }
+                } 
+                if (newPassword.Length < 8)
                 {
                     TempData["ErrorMessage"] = "Mật khẩu phải có độ dài ít nhất 8 ký tự!";
                 }
@@ -129,13 +133,12 @@ namespace DienDanThaoLuan.Controllers
                 {
                     TempData["ErrorMessage"] = "Mật khẩu mới và xác nhận mật khẩu không khớp!";
                 }
-
                 else
                 {
                     member.MatKhau = BCrypt.Net.BCrypt.HashPassword(newPassword);
                     Log.Information("MemberInfo {username} đã thay đổi mật khẩu ở trang thông tin cá nhân", username);
                     db.SaveChanges();
-                    TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+                    TempData["SuccessMessage"] = "Mật khẩu đã được cập nhập thành công!";
                 }
             }
             return RedirectToAction("Index");
