@@ -576,17 +576,12 @@ namespace DienDanThaoLuan.Controllers
             string userId = Session["UserId"]?.ToString();
             // Lấy AdminID từ Session
             string adminId = Session["AdminId"]?.ToString();
-            int maND = Convert.ToInt32(userId);
-            if (maND == 0)
-            {
-                maND = Convert.ToInt32(adminId);
-            }    
             var baiVietCuaToi = db.BaiViets.Select(bv => new BaiVietView
             {
                 BaiViet = bv,
                 SoBL = db.BinhLuans.Count(bl => bl.MaBV == bv.MaBV),
                 IsAdmin = db.NguoiDungs.Any(n => n.MaND == bv.MaND && n.LoaiND.TenLoai == "admin"),
-            }).Where(bv => bv.BaiViet.TrangThai.Contains("Đã duyệt") && bv.BaiViet.MaND == maND).OrderByDescending(n => n.BaiViet.NgayDang).ToList();
+            }).Where(bv => bv.BaiViet.TrangThai.Contains("Đã duyệt")).OrderByDescending(n => n.BaiViet.NgayDang).ToList();
 
             // Phân trang
             int iSize = 8;
