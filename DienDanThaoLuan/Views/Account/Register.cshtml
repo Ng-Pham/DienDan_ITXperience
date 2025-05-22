@@ -162,6 +162,7 @@
                             </div>
                             @Html.Partial("_PartialCaptcha")
                             <p style="color: yellow; font-size:14px; margin-bottom:1.5px">@ViewBag.error</p>
+                            <p style="color: yellow; font-size: 14px; margin-bottom: 1.5px">@(TempData["Error"] as string)</p>
                             <div class="form-group">
                                 <button type="submit" class="form-control btn btn-primary submit px-3" id="submit-button">Sign-up</button>
                             </div>
