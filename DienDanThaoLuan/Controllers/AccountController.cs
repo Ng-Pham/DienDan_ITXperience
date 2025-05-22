@@ -485,7 +485,13 @@ namespace DienDanThaoLuan.Controllers
                 string accessToken = tokenObj.Value<string>("access_token");
 
                 if (accessToken == null)
-                    return RedirectToAction("Login"); // lỗi
+                {
+                    if (!isRegistering)
+                    {
+                        return RedirectToAction("Login"); // lỗi
+                    }
+                    return RedirectToAction("Register"); // lỗi
+                }
 
                 // Lấy thông tin user
                 client.DefaultRequestHeaders.Authorization =
@@ -500,7 +506,11 @@ namespace DienDanThaoLuan.Controllers
                 if (string.IsNullOrEmpty(email))
                 {
                     TempData["Error"] = "Không thể lấy thông tin email từ Google.";
-                    return RedirectToAction("Login"); // lỗi
+                    if (!isRegistering)
+                    {
+                        return RedirectToAction("Login"); // lỗi
+                    }
+                    return RedirectToAction("Register"); // lỗi
                 }
 
                 // Lấy username trước dấu @ và cắt 15 ký tự
@@ -593,7 +603,7 @@ namespace DienDanThaoLuan.Controllers
                 SoBL = db.BinhLuans.Count(bl => bl.MaBV == bv.MaBV),
                 CodeContent = null,
                 IsAdmin = db.NguoiDungs.Any(n => n.MaND == bv.MaND && n.LoaiND.TenLoai == "admin"),
-            }).Where(bv => bv.BaiViet.TrangThai.Contains("Đã duyệt")).OrderByDescending(n => n.BaiViet.NgayDang).ToList();
+            }).Where(bv => bv.BaiViet.TrangThai.Contains("Đã duyệt") && bv.BaiViet.MaND == id).OrderByDescending(n => n.BaiViet.NgayDang).ToList();
 
             ViewBag.Id = id;
             int iSize = 8;
