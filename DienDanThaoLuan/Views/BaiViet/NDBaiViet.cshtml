@@ -157,7 +157,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("ChuDe", "ChuDe", new { id = ViewBag.maloai })">@ViewBag.tenloai</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><a href="@Url.Action("BaiVietTheoCD", "DienDanThaoLuan", new { id = ViewBag.macd, tenloai = ViewBag.tenloai })">@ViewBag.tencd</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="@Url.Action("BaiVietTheoCD", "ChuDe", new { id = ViewBag.macd, tenloai = ViewBag.tenloai })">@ViewBag.tencd</a></li>
             </ol>
         </nav>
     </div>
